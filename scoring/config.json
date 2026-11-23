@@ -12,24 +12,6 @@
     "strength_percentile": 80,
     "weakness_percentile": 20
   },
-  "cards": {
-    "amarilla": {
-      "label": "Tarjeta amarilla",
-      "penalty": 0.3,
-      "description": "Sanción leve en firme: amonestación, multa disciplinaria, hallazgo fiscal con incidencia, sanción del CNE por reporte de campaña."
-    },
-    "roja": {
-      "label": "Tarjeta roja",
-      "penalty": 1.5,
-      "rating_cap": 4.5,
-      "description": "Sanción grave en firme: destitución o inhabilidad (Procuraduría), fallo de responsabilidad fiscal (Contraloría), pérdida de investidura (Consejo de Estado), condena penal ejecutoriada."
-    },
-    "investigacion": {
-      "label": "En investigación (VAR)",
-      "penalty": 0.0,
-      "description": "Proceso abierto, sin decisión en firme. Se muestra pero no resta: presunción de inocencia."
-    }
-  },
   "roles": {
     "alcalde": {
       "label": "Alcaldes",
@@ -351,7 +333,7 @@
           "source": "Congreso Visible / Senado"
         },
         "proyectos_ley": {
-          "label": "Proyectos convertidos en ley (goles)",
+          "label": "Proyectos convertidos en ley",
           "category": "legislativo",
           "weight": 3,
           "direction": 1,
@@ -359,7 +341,7 @@
           "source": "Congreso Visible / Secretaría General"
         },
         "ponencias": {
-          "label": "Ponencias radicadas (asistencias)",
+          "label": "Ponencias radicadas",
           "category": "legislativo",
           "weight": 2,
           "direction": 1,
@@ -465,7 +447,7 @@
           "source": "Congreso Visible / Cámara"
         },
         "proyectos_ley": {
-          "label": "Proyectos convertidos en ley (goles)",
+          "label": "Proyectos convertidos en ley",
           "category": "legislativo",
           "weight": 3,
           "direction": 1,
@@ -473,7 +455,7 @@
           "source": "Congreso Visible / Secretaría General"
         },
         "ponencias": {
-          "label": "Ponencias radicadas (asistencias)",
+          "label": "Ponencias radicadas",
           "category": "legislativo",
           "weight": 2,
           "direction": 1,

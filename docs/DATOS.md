@@ -50,7 +50,7 @@ So "Asistencia y voto" is missing, and coverage sits right at the 50% threshold.
   `11DD` + `DD000` for departments.
 - **Minimum volume:** at least 30 contracts to publish contracting metrics and at least 10
   competitive processes for `oferente_unico`.
-- **Leagues:** a municipality is placed by its DNP *grupo de capacidades*
+- **Comparison groups:** a municipality is placed by its DNP *grupo de capacidades*
   (C, G1–G5), which the DNP designed for fair comparison. If that's missing, the Ley 617
   category is used. Values from the nearest available year are carried forward.
 

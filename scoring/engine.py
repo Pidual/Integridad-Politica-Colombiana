@@ -1,13 +1,13 @@
-"""Motor de calificación — "rating tipo WhoScored" para políticos colombianos.
+"""Motor de calificación para políticos colombianos (comparación justa entre pares).
 
 Pipeline por temporada (año):
-  1. Agrupar a cada político con sus pares: mismo rol (posición) y misma liga
+  1. Agrupar a cada político con sus pares: mismo rol y mismo grupo de comparación
      (p. ej. alcaldes del mismo grupo de capacidades DNP, o categoría Ley 617).
   2. Para cada métrica, calcular un z-score robusto (mediana/MAD) dentro del grupo
      de pares, orientado para que "más alto = mejor", y recortado a ±z_cap.
   3. Promediar z por categoría (pesos por métrica) y luego entre categorías
      (pesos por categoría). Métricas faltantes se ignoran y se registra la cobertura.
-  4. Encoger hacia el promedio cuando hay pocas métricas (como exigir minutos jugados).
+  4. Encoger hacia el promedio cuando hay pocas métricas (poca evidencia = nota prudente).
   5. Mapear a 1–10: rating = baseline + scale * z_compuesto  (promedio = 6.0).
   6. Restar tarjetas en firme (amarilla/roja). Procesos abiertos no restan.
 
@@ -199,7 +199,7 @@ def compute(records: list[dict], config: dict) -> dict:
         penalty = 0.0
         cap = rc["max"]
         for card in r.get("tarjetas", []):
-            ccfg = config["cards"].get(card.get("tipo"))
+            ccfg = config.get("cards", {}).get(card.get("tipo"))
             if not ccfg:
                 continue
             penalty += ccfg["penalty"]
@@ -264,7 +264,7 @@ def compute(records: list[dict], config: dict) -> dict:
         "config": {
             "version": config["version"],
             "rating": rc,
-            "cards": config["cards"],
+            "cards": config.get("cards", {}),
             "integridad": config.get("integridad", {}),
             "roles": {
                 k: {
@@ -285,6 +285,8 @@ def main(argv=None):
     ap.add_argument("--data", default=str(ROOT / "data" / "sample" / "politicos.json"))
     ap.add_argument("--config", default=str(ROOT / "scoring" / "config.json"))
     ap.add_argument("--out", default=str(ROOT / "web" / "data" / "ratings.js"))
+    ap.add_argument("--var", default="RATINGS", help="variable global en el .js (RATINGS o RATINGS_INTERNO)")
+    ap.add_argument("--readable", default=None, help="ruta de la copia legible .json (por defecto junto a --data)")
     args = ap.parse_args(argv)
 
     config = json.loads(Path(args.config).read_text(encoding="utf-8"))
@@ -297,9 +299,10 @@ def main(argv=None):
     # .js (no .json) para que web/index.html abra directo con file:// sin servidor.
     # Compacto: es lo que descarga cada visitante del sitio.
     compact = json.dumps(out, ensure_ascii=False, separators=(",", ":"))
-    out_path.write_text(f"window.RATINGS = {compact};\n", encoding="utf-8")
+    out_path.write_text(f"window.{args.var} = {compact};\n", encoding="utf-8")
     # Copia legible para revisión/diffs, fuera de la carpeta publicada.
-    readable = ROOT / "data" / "real" / "ratings.json" if "real" in str(args.data) else out_path.with_suffix(".json")
+    readable = Path(args.readable) if args.readable else (
+        ROOT / "data" / "real" / "ratings.json" if "real" in str(args.data) else out_path.with_suffix(".json"))
     if readable.parent != out_path.parent:
         stale = out_path.with_suffix(".json")
         if stale.exists():

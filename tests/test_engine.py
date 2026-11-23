@@ -42,12 +42,6 @@ class EngineTest(unittest.TestCase):
         # s0 has the most false claims (6), s5 the fewest (1)
         self.assertLess(out["s0"]["metricas"]["chequeos_falsos"]["percentil"], out["s5"]["metricas"]["chequeos_falsos"]["percentil"])
 
-    def test_red_card_penalizes_and_caps(self):
-        recs = senators()
-        recs[11]["tarjetas"] = [{"tipo": "roja"}]
-        p = by_id(engine.compute(recs, CONFIG))["s11"]
-        self.assertLessEqual(p["rating_rendimiento"], CONFIG["cards"]["roja"]["rating_cap"])
-        self.assertLess(p["rating_rendimiento"], p["rating_sin_tarjetas"])
 
     def test_open_investigation_does_not_penalize(self):
         base = by_id(engine.compute(senators(), CONFIG))["s3"]["rating_rendimiento"]

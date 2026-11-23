@@ -4,3 +4,8 @@ __pycache__/
 data/raw/
 # Bitácora en revisión: NO subir sin revisión editorial (ver README)
 data/eventos/eventos.json
+
+# Vista interna con eventos sin revisar: nunca se publica
+web/data/ratings_interno.js
+data/real/politicos_interno.json
+data/real/ratings_interno.json

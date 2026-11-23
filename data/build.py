@@ -243,7 +243,7 @@ def main(argv=None):
     ap.add_argument("--skip-secop", action="store_true")
     ap.add_argument("--congreso", action="store_true", help="re-descarga listados y actividad del Senado")
     ap.add_argument("--solo-revisados", action="store_true",
-                    help="para PUBLICAR: incluye solo eventos de integridad con revisado=true")
+                    help="(obsoleto: siempre se generan la versión pública y la interna)")
     args = ap.parse_args(argv)
 
     ref = reference.build(args.refresh) if args.refresh or not reference.OUT.exists() else reference.load()
@@ -258,21 +258,35 @@ def main(argv=None):
         congreso.build(args.refresh)
         senado.build(args.refresh)
     records += senado_records()
-    print(f"eventos de integridad asociados: {attach_events(records, args.solo_revisados)}")
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({
-        "demo": False,
-        "aviso": ("Datos reales de fuentes públicas. Senado 2026–2030: la nota es de INTEGRIDAD (bitácora de escándalos, "
-                  "procesos y sanciones con fuentes, base 8, +/− por evento); la actividad legislativa es informativa. "
-                  + ("Solo se publican eventos verificados por el equipo editorial. " if args.solo_revisados else
-                     "VISTA INTERNA: incluye eventos aún no revisados. ")
-                  + "Alcaldías y gobernaciones: rendimiento por mandato (años con datos combinados)."),
-        "temporadas": args.years,
-        "politicos": records,
-    }, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(f"{len(records)} registros -> {OUT}")
 
-    engine.main(["--data", str(OUT)])
+    # Two outputs every time:
+    #   pública  -> web/data/ratings.js (se publica; solo eventos revisados)
+    #   interna  -> web/data/ratings_interno.js (ignorada por git; todos los eventos)
+    import copy
+    interno = copy.deepcopy(records)
+    n_pub = attach_events(records, solo_revisados=True)
+    n_int = attach_events(interno, solo_revisados=False)
+    print(f"eventos de integridad: {n_pub} en la versión pública (revisados), {n_int} en la vista interna")
+
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    for recs, publico in ((records, True), (interno, False)):
+        data_path = OUT if publico else OUT.with_name("politicos_interno.json")
+        data_path.write_text(json.dumps({
+            "demo": False,
+            "aviso": ("Datos reales de fuentes públicas. Senado 2026–2030: la nota es de INTEGRIDAD (bitácora de escándalos, "
+                      "procesos y sanciones con fuentes, base 8, +/− por evento); la actividad legislativa es informativa. "
+                      + ("Solo se publican eventos verificados por el equipo editorial. " if publico else
+                         "VISTA INTERNA (solo en este computador): incluye eventos aún no revisados. ")
+                      + "Alcaldías y gobernaciones: rendimiento por mandato (años con datos combinados)."),
+            "vista": "publica" if publico else "interna",
+            "temporadas": args.years,
+            "politicos": recs,
+        }, ensure_ascii=False, indent=1), encoding="utf-8")
+        engine.main(["--data", str(data_path),
+                     "--out", str(ROOT / "web" / "data" / ("ratings.js" if publico else "ratings_interno.js")),
+                     "--var", "RATINGS" if publico else "RATINGS_INTERNO",
+                     "--readable", str(ROOT / "data" / "real" / ("ratings.json" if publico else "ratings_interno.json"))])
+    print(f"{len(records)} registros -> pública: web/data/ratings.js · interna: web/data/ratings_interno.js (no se sube)")
 
 
 if __name__ == "__main__":

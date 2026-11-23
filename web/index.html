@@ -54,7 +54,7 @@
           <select id="liga"></select>
           <select id="partido"></select>
           <label class="chk"><input id="only-rated" type="checkbox"> Solo con rating</label>
-          <span class="view-toggle" id="view-toggle" hidden><button data-l="cards" class="on">Tarjetas</button><button data-l="table">Tabla</button></span>
+          <span class="view-toggle" id="view-toggle" hidden><button data-l="cards" class="on">Fichas</button><button data-l="table">Tabla</button></span>
         </div>
       </div>
       <div class="table-wrap">
@@ -62,11 +62,8 @@
       </div>
       <div id="cards" class="cards-grid" hidden></div>
       <p class="legend">
-        Rating 1–10, promedio = 6.0 dentro de cada liga.
-        <span class="card y"></span> amarilla (sanción leve en firme)
-        <span class="card r"></span> roja (sanción grave en firme)
-        <span class="var">VAR</span> proceso abierto, no resta.
-        Haz clic en una fila para abrir su página.
+        Nota de 1 a 10. Alcaldes y gobernadores: 6,0 es el promedio de su grupo de comparación (municipios y departamentos con capacidades similares).
+        Senadores: nota de integridad, base 8, con sumas y restas por hechos documentados. Haz clic en una persona para abrir su expediente.
       </p>
     </section>
 
@@ -90,6 +87,8 @@
 </footer>
 
 <script src="data/ratings.js"></script>
+<!-- Solo existe en el computador del equipo (ignorado por git): vista con eventos sin revisar -->
+<script src="data/ratings_interno.js" onerror="this.remove()"></script>
 <script src="app.js"></script>
 </body>
 </html>

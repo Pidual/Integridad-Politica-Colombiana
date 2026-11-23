@@ -1,9 +1,10 @@
 # Integridad Política Colombiana
 
-WhoScored‑style ratings for Colombian politicians: alcaldes, gobernadores, senadores and
-representantes get a **1–10 season rating** computed from public data and compared only
-against peers in the same role and "league" (municipal category), with yellow/red cards
-for final sanctions.
+Calificaciones de alcaldes, gobernadores y senadores de Colombia con datos públicos y
+fuentes verificables. Alcaldes y gobernadores reciben una nota de **desempeño del mandato**
+comparada solo con pares en condiciones similares; los senadores, una nota de
+**integridad** construida a partir de hechos documentados (procesos, sanciones,
+investigaciones periodísticas, reconocimientos). Metodología: `docs/METODOLOGIA.md`.
 
 ## Quick start
 

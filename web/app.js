@@ -1,6 +1,7 @@
 (function () {
   "use strict";
-  const DATA = window.RATINGS;
+  // Vista interna (archivo local, no publicado) si existe; si no, la pública.
+  const DATA = window.RATINGS_INTERNO || window.RATINGS;
   if (!DATA) {
     document.querySelector(".layout").innerHTML =
       "<p style='padding:20px'>No hay datos. Ejecuta <code>python scoring/engine.py</code>.</p>";
@@ -27,8 +28,8 @@
     return "r-bad";
   }
   const badge = (r, extra = "") => `<span class="rating ${tier(r)} ${extra}">${r == null ? "N/D" : r.toFixed(2)}</span>`;
-  const cardsHtml = (p) =>
-    p.tarjetas.map((t) => (t.tipo === "amarilla" ? '<span class="card y" title="Amarilla"></span>' : t.tipo === "roja" ? '<span class="card r" title="Roja"></span>' : '<span class="var" title="Proceso abierto">VAR</span>')).join("");
+  // Nombre visible del grupo de comparación ("Única" = todos los del rol)
+  const grupo = (l) => (l === "Única" || l === "General" ? "General" : l || "General");
 
   function fmt(v, unit) {
     if (v == null) return '<span class="na">–</span>';
@@ -93,18 +94,11 @@
       cols.push({ key: "pend", label: "Sin revisar", get: (p) => p.integridad.pendientes_revision, html: (p) => p.integridad.pendientes_revision ? `<span class="chip warn">${p.integridad.pendientes_revision}</span>` : "" });
       cols.push({ key: "rend", label: "Actividad (info)", title: "Rendimiento legislativo de la legislatura en curso; no cuenta en la nota", get: (p) => p.rating_rendimiento, html: (p) => p.rating_rendimiento == null ? "–" : `<span class="src">${p.rating_rendimiento.toFixed(2)}</span>` });
     } else if (state.view === "resumen") {
-      cols.push({ key: "liga", label: "Liga", get: (p) => p.liga, l: true });
+      cols.push({ key: "liga", label: "Grupo de comparación", get: (p) => grupo(p.liga), l: true });
       for (const [ck, c] of Object.entries(role.categories)) {
         cols.push({ key: "cat:" + ck, label: c.label, get: (p) => p.categorias[ck].rating, html: (p) => { const r = p.categorias[ck].rating; return r == null ? '<span class="na">–</span>' : r.toFixed(2); } });
       }
       cols.push({ key: "cobertura", label: "Cobertura", get: (p) => p.cobertura, html: (p) => Math.round(p.cobertura * 100) + "%" });
-    } else if (state.view === "disciplina") {
-      const n = (p, t) => p.tarjetas.filter((x) => x.tipo === t).length;
-      cols.push({ key: "am", label: "Amarillas", get: (p) => n(p, "amarilla") });
-      cols.push({ key: "ro", label: "Rojas", get: (p) => n(p, "roja") });
-      cols.push({ key: "var", label: "En investigación", get: (p) => n(p, "investigacion") });
-      cols.push({ key: "pen", label: "Penalización", get: (p) => p.penalizacion, html: (p) => (p.penalizacion ? "−" + p.penalizacion.toFixed(2) : "0") });
-      cols.push({ key: "raw", label: "Rating sin tarjetas", get: (p) => p.rating_sin_tarjetas, html: (p) => (p.rating_sin_tarjetas == null ? "–" : p.rating_sin_tarjetas.toFixed(2)) });
     } else {
       for (const [mk, m] of Object.entries(role.metrics)) {
         if (m.category !== state.view) continue;
@@ -121,13 +115,13 @@
   function render() {
     document.querySelectorAll("#role-tabs button").forEach((b) => b.setAttribute("aria-selected", b.dataset.role === state.role));
     const role = CFG.roles[state.role];
-    const views = [["resumen", "Resumen"], ...Object.entries(role.categories).map(([k, c]) => [k, c.label]), ["disciplina", "Disciplina"]];
+    const views = [["resumen", "Resumen"], ...Object.entries(role.categories).map(([k, c]) => [k, c.label])];
     $("#cat-tabs").innerHTML = views.map(([k, l]) => `<button data-v="${k}" class="${k === state.view ? "on" : ""}">${esc(l)}</button>`).join("");
     $("#cat-tabs").onclick = (e) => { const b = e.target.closest("button"); if (b) { state.view = b.dataset.v; render(); } };
 
     const pols = rolePols();
     const ligas = [...new Set(pols.map((p) => p.liga))].sort();
-    $("#liga").innerHTML = `<option value="">Todas las ligas</option>` + ligas.map((l) => `<option ${l === state.liga ? "selected" : ""}>${esc(l)}</option>`).join("");
+    $("#liga").innerHTML = `<option value="">Todos los grupos</option>` + ligas.map((l) => `<option value="${esc(l)}" ${l === state.liga ? "selected" : ""}>${esc(grupo(l))}</option>`).join("");
     $("#liga").hidden = ligas.length < 2;
     const partidos = [...new Set(pols.map((p) => p.partido))].filter((x) => x && x !== "—").sort();
     $("#partido").hidden = partidos.length === 0;
@@ -142,7 +136,6 @@
       { key: "num", label: "#", cls: "num" },
       { key: "nombre", label: "Nombre", l: true, get: (p) => p.nombre },
       ...cols,
-      { key: "tarjetas", label: "", get: (p) => p.penalizacion },
       { key: "rating", label: isInteg(state.role) ? "Integridad" : "Rating", get: (p) => p.rating },
     ];
     $("#grid thead").innerHTML = "<tr>" + all.map((c) =>
@@ -199,7 +192,6 @@
         <td class="num">${i + 1}</td>
         <td class="l who"><div class="who-row">${avatar(p)}<div><strong>${esc(p.nombre)}</strong><span>${subtitle(p)}</span></div></div></td>
         ${cols.map((c) => `<td class="${c.l ? "l" : ""}">${c.html ? c.html(p) : esc(c.get(p))}</td>`).join("")}
-        <td>${cardsHtml(p)}</td>
         <td>${badge(p.rating)}</td>
       </tr>`).join("") || `<tr><td colspan="${all.length}" class="l na">Sin resultados.</td></tr>`;
     $("#grid tbody").onclick = (e) => { const tr = e.target.closest("tr[data-id]"); if (tr) go(tr.dataset.id); };
@@ -256,7 +248,7 @@
       [p.rol === "alcalde" || p.rol === "gobernador" ? "Departamento" : "Partido",
         `<b class="tile-txt">${esc(p.rol === "alcalde" || p.rol === "gobernador" ? p.departamento : p.partido)}</b>`],
       ["Puesto en " + role.label.toLowerCase(), p.rank_rol ? `<b class="tile-num">${p.rank_rol}</b><span class="src"> de ${rated.length}</span>` : "–"],
-      ["Puesto en liga", p.rank_liga ? `<b class="tile-num">${p.rank_liga}</b><span class="src"> · ${esc(p.liga)}</span>` : `<span class="src">${esc(p.liga)}</span>`],
+      ["Puesto en su grupo", p.rank_liga ? `<b class="tile-num">${p.rank_liga}</b><span class="src"> · ${esc(grupo(p.liga))}</span>` : `<span class="src">${esc(grupo(p.liga))}</span>`],
       p.rating_principal === "integridad"
         ? ["Eventos registrados", `<b class="tile-num">${p.integridad.n_eventos}</b><span class="src">${p.integridad.resta_total ? " · resta −" + p.integridad.resta_total.toFixed(1) : ""}</span>`]
         : ["Cobertura de datos", `<b class="tile-num">${Math.round(p.cobertura * 100)}%</b>`],
@@ -292,7 +284,7 @@
       const sorted = rated.slice().sort((a, b) => b.rating - a.rating);
       const i = sorted.findIndex((x) => x.id === p.id);
       const near = sorted.slice(Math.max(0, i - 3), i + 4);
-      neigh = `<section class="panel pad"><h3>Rivales cercanos en el ranking</h3><ol class="near">
+      neigh = `<section class="panel pad"><h3>Posiciones cercanas en el ranking</h3><ol class="near">
         ${near.map((x) => `<li class="${x.id === p.id ? "me" : ""}"><span class="pos">${sorted.indexOf(x) + 1}</span><a class="who-row" href="${personHref(x)}">${avatar(x)}<span class="near-name">${esc(x.nombre)}<span class="src">${esc(x.partido && x.partido !== "—" ? x.partido : x.entidad || "")}</span></span></a>${badge(x.rating)}</li>`).join("")}
       </ol></section>`;
     }
@@ -307,13 +299,12 @@
           <div class="src">${esc(role.position)}${p.periodo ? " · mandato " + esc(p.periodo) : ""}${p.anios && p.anios.length ? " · datos de " + esc(p.anios.join(", ")) : ""}</div>
           <h1>${esc(p.nombre)}</h1>
           <div class="hero-sub">${subtitle(p)}</div>
-          <div>${cardsHtml(p)}</div>
         </div>
         <div class="hero-rating">${badge(p.rating, "huge")}<div class="src">${p.rating == null ? "sin rating global" : p.rating_principal === "integridad" ? "nota de integridad" : "nota del mandato"}</div></div>
       </section>
 
       ${p.titular_identificado === false ? `<div class="note">Titular aún no vinculado: se califica el cargo en el mandato ${esc(p.periodo || "")}.</div>` : ""}
-      ${p.rating == null ? `<div class="note">Sin rating global: cobertura ${Math.round(p.cobertura * 100)}% &lt; ${Math.round(CFG.rating.min_coverage * 100)}% mínimo (como no tener minutos suficientes). Las categorías con datos sí se muestran.</div>` : ""}
+      ${p.rating == null ? `<div class="note">Sin rating global: cobertura ${Math.round(p.cobertura * 100)}% &lt; ${Math.round(CFG.rating.min_coverage * 100)}% mínimo de datos para dar una nota confiable. Las categorías con datos sí se muestran.</div>` : ""}
 
       <div class="tiles">${tiles}</div>
 
@@ -321,7 +312,7 @@
         <div class="col-main">
           ${ledgerHtml(p)}
           <section class="panel pad">
-            <h3>${p.rating_principal === "integridad" ? "Actividad legislativa (informativa, no cuenta en la nota)" : "Estadísticas"} <span class="src">· comparado con ${peers.length} pares (${esc(p.liga)})</span></h3>
+            <h3>${p.rating_principal === "integridad" ? "Actividad legislativa (informativa, no cuenta en la nota)" : "Estadísticas"} <span class="src">· comparado con ${peers.length} pares (grupo: ${esc(grupo(p.liga))})</span></h3>
             <div class="table-wrap"><table class="stats">
               <thead><tr><th class="l">Métrica</th><th>Valor</th><th>Mediana pares</th><th class="l">Percentil</th><th class="l">Fuente</th></tr></thead>
               <tbody>${statRows}</tbody></table></div>
@@ -340,9 +331,6 @@
           <section class="panel pad">
             <h3>Fortalezas</h3>${p.fortalezas.length ? `<div class="tags">${p.fortalezas.map((k) => `<span class="tag s">${lab(k)}</span>`).join("")}</div>` : '<p class="src">Ninguna destacada (≥ P80).</p>'}
             <h3>Debilidades</h3>${p.debilidades.length ? `<div class="tags">${p.debilidades.map((k) => `<span class="tag w">${lab(k)}</span>`).join("")}</div>` : '<p class="src">Ninguna marcada (≤ P20).</p>'}
-          </section>
-          <section class="panel pad"><h3>Disciplina</h3>
-            ${p.tarjetas.length ? `<ul class="cards-list">${p.tarjetas.map((t) => `<li>${cardsHtml({ tarjetas: [t] })} ${esc(t.descripcion)} <span class="src">— ${esc(t.fuente)}</span></li>`).join("")}</ul>` : '<p class="src">Sin tarjetas registradas. (Sanciones de Procuraduría y Contraloría aún no conectadas.)</p>'}
           </section>
           ${neigh}
         </div>
