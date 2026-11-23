@@ -330,7 +330,7 @@
           "weight": 1,
           "direction": 1,
           "unit": "n",
-          "source": "Congreso Visible / Senado"
+          "source": "leyes.senado.gov.co"
         },
         "proyectos_ley": {
           "label": "Proyectos convertidos en ley",
@@ -338,7 +338,7 @@
           "weight": 3,
           "direction": 1,
           "unit": "n",
-          "source": "Congreso Visible / Secretaría General"
+          "source": "leyes.senado.gov.co / Secretaría General"
         },
         "ponencias": {
           "label": "Ponencias radicadas",
@@ -354,7 +354,7 @@
           "weight": 2,
           "direction": 1,
           "unit": "n",
-          "source": "Gaceta del Congreso / Congreso Visible"
+          "source": "Gaceta del Congreso"
         },
         "proposiciones": {
           "label": "Proposiciones aprobadas",
@@ -370,7 +370,7 @@
           "weight": 3,
           "direction": 1,
           "unit": "%",
-          "source": "Actas de plenaria / Congreso Visible"
+          "source": "Actas de plenaria (Gaceta del Congreso)"
         },
         "participacion_votos": {
           "label": "Participación en votaciones nominales",
@@ -444,7 +444,7 @@
           "weight": 1,
           "direction": 1,
           "unit": "n",
-          "source": "Congreso Visible / Cámara"
+          "source": "Cámara de Representantes"
         },
         "proyectos_ley": {
           "label": "Proyectos convertidos en ley",
@@ -452,7 +452,7 @@
           "weight": 3,
           "direction": 1,
           "unit": "n",
-          "source": "Congreso Visible / Secretaría General"
+          "source": "leyes.senado.gov.co / Secretaría General"
         },
         "ponencias": {
           "label": "Ponencias radicadas",
@@ -468,7 +468,7 @@
           "weight": 2,
           "direction": 1,
           "unit": "n",
-          "source": "Gaceta del Congreso / Congreso Visible"
+          "source": "Gaceta del Congreso"
         },
         "proposiciones": {
           "label": "Proposiciones aprobadas",
@@ -484,7 +484,7 @@
           "weight": 3,
           "direction": 1,
           "unit": "%",
-          "source": "Actas de plenaria / Congreso Visible"
+          "source": "Actas de plenaria (Gaceta del Congreso)"
         },
         "participacion_votos": {
           "label": "Participación en votaciones nominales",

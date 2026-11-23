@@ -61,6 +61,12 @@
   $("#partido").addEventListener("change", (e) => { state.partido = e.target.value; renderTable(); });
 
   const REPO = "https://github.com/Pidual/Integridad-Politica-Colombiana";
+  // Participación ciudadana -------------------------------------------------
+  // Comentarios con Giscus (GitHub Discussions). Se activa al completar categoryId:
+  // 1) Settings → General → Features → Discussions  2) instalar https://github.com/apps/giscus
+  // 3) en https://giscus.app copiar data-category-id de la categoría "Debate" y pegarlo aquí.
+  const GISCUS = { repo: "Pidual/Integridad-Politica-Colombiana", repoId: "R_kgDOV5AXcg", category: "Debate", categoryId: "" };
+  const aportarHref = (p) => `${REPO}/issues/new?template=aportar-evidencia.yml&title=${encodeURIComponent("Evidencia: " + p.nombre)}&persona=${encodeURIComponent(p.nombre)}&enlace=${encodeURIComponent(location.href)}`;
   const rectHref = (p) => `${REPO}/issues/new?template=rectificacion.yml&title=${encodeURIComponent("Rectificación: " + p.nombre)}&persona=${encodeURIComponent(p.nombre)}&enlace=${encodeURIComponent(location.href)}`;
   // verdict colour for integrity grades: base 8 = neutral
   const verdict = (p) => {
@@ -334,7 +340,9 @@
           </section>
           ${neigh}
         </div>
-      </div>`;
+      </div>
+      ${debateHtml(p)}`;
+    mountGiscus(p);
 
     el.querySelector("[data-back]").onclick = (e) => {
       e.preventDefault();
@@ -356,7 +364,8 @@
     if (!I.n_eventos) {
       return `<section class="panel pad"><h3>Integridad</h3>
         <p>Sin hallazgos registrados, ni en contra ni a favor: queda en la base (${CFG.integridad.base}). <span class="src">Esto no certifica ausencia de problemas: significa que la bitácora aún no tiene eventos documentados para esta persona. Para subir a 10 hay que demostrar transparencia (P1–P3).</span></p>
-        <p class="src small-legend">${legend}</p></section>`;
+        <p class="src small-legend">${legend}</p>
+        <a class="btn-aportar" href="${aportarHref(p)}" target="_blank" rel="noopener noreferrer">+ Aportar evidencia sobre esta persona</a></section>`;
     }
     const items = I.eventos.map((e) => `
       <article class="ev ${e.positivo ? "ev-pos" : ""}">
@@ -371,11 +380,41 @@
         ${e.rectificaciones && e.rectificaciones.length ? `<p class="ev-note"><b>Rectificación:</b> ${e.rectificaciones.map(esc).join(" ")}</p>` : ""}
         ${e.respuesta ? `<p class="ev-note"><b>Respuesta / versión del político:</b> ${esc(e.respuesta)}</p>` : ""}
         <ul class="ev-src">${e.fuentes.map((f) => `<li><a href="${esc(f.url)}" target="_blank" rel="noopener noreferrer">${esc(f.medio || "Fuente")}${f.fecha ? " · " + esc(f.fecha) : ""}</a>${f.titulo ? ` — <span class="src">${esc(f.titulo)}</span>` : ""}</li>`).join("")}</ul>
+        ${e.aportado_por ? `<p class="src">Aportado por ${e.aportado_por.url ? `<a href="${esc(e.aportado_por.url)}" target="_blank" rel="noopener noreferrer">${esc(e.aportado_por.usuario || "un ciudadano")}</a>` : esc(e.aportado_por.usuario || "un ciudadano anónimo")} · gracias por contribuir</p>` : ""}
         ${e.revisado ? "" : '<span class="chip warn">Pendiente de revisión editorial</span>'}
       </article>`).join("");
     const posLegend = Object.entries((CFG.integridad && CFG.integridad.positivos) || {}).map(([k, v]) => `<span class="lv lvpos">${k}</span> ${esc(v.label)} (+${v.suma})`).join(" · ");
     return `<section class="panel pad"><h3>Integridad <span class="src">· base ${CFG.integridad.base} · ${I.n_negativos || 0} en contra (−${I.resta_total.toFixed(1)}) · ${I.n_positivos || 0} a favor (+${(I.suma_total || 0).toFixed(2)})</span></h3>
-      ${items}<p class="src small-legend">${legend}<br>${posLegend} (tope +${CFG.integridad.tope_positivos}).<br>Presunción de inocencia: un proceso abierto no es una condena.</p></section>`;
+      ${items}<p class="src small-legend">${legend}<br>${posLegend} (tope +${CFG.integridad.tope_positivos}).<br>Presunción de inocencia: un proceso abierto no es una condena.</p>
+      <a class="btn-aportar" href="${aportarHref(p)}" target="_blank" rel="noopener noreferrer">+ Aportar evidencia sobre esta persona</a></section>`;
+  }
+
+  function debateHtml(p) {
+    const aportar = `<a class="btn-aportar" href="${aportarHref(p)}" target="_blank" rel="noopener noreferrer">+ Aportar evidencia</a>`;
+    return `<section class="panel pad debate" id="debate">
+      <h3>Debate ciudadano</h3>
+      <p class="src">Opina con respeto y con argumentos. Los comentarios no cambian la nota: para eso aporta evidencia con fuentes,
+        que el equipo revisa. Se eliminan insultos, amenazas, datos personales y desinformación.</p>
+      ${aportar}
+      <div class="giscus-slot">${GISCUS.categoryId ? "" : '<p class="note">Los comentarios se activarán pronto.</p>'}</div>
+    </section>`;
+  }
+
+  function mountGiscus(p) {
+    if (!GISCUS.categoryId) return;
+    const slot = document.querySelector("#debate .giscus-slot");
+    if (!slot) return;
+    const sc = document.createElement("script");
+    sc.src = "https://giscus.app/client.js";
+    const attrs = {
+      "data-repo": GISCUS.repo, "data-repo-id": GISCUS.repoId, "data-category": GISCUS.category,
+      "data-category-id": GISCUS.categoryId, "data-mapping": "specific", "data-term": "Expediente: " + p.id,
+      "data-strict": "1", "data-reactions-enabled": "1", "data-emit-metadata": "0", "data-input-position": "top",
+      "data-theme": "preferred_color_scheme", "data-lang": "es", "data-loading": "lazy", crossorigin: "anonymous",
+    };
+    Object.entries(attrs).forEach(([k, v]) => sc.setAttribute(k, v));
+    sc.async = true;
+    slot.appendChild(sc);
   }
 
   // ================================================================ router

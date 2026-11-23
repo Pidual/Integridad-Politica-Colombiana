@@ -1,0 +1,79 @@
+name: Aportar evidencia
+description: Reporta un hecho documentado (a favor o en contra) sobre una persona del sitio. Se revisa antes de publicarse.
+title: "Evidencia: "
+labels: ["evidencia", "por-revisar"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Gracias por aportar.** Cada aporte lo revisa una persona del equipo contra las fuentes antes de publicarse.
+        Reglas: solo hechos con fuente verificable (decisión judicial, comunicado oficial, registro público o
+        investigación periodística con documentos). No se publican rumores, insultos ni datos de familiares.
+        Si se aprueba, aparecerá en la bitácora con crédito a tu usuario de GitHub (o anónimo si lo prefieres).
+  - type: input
+    id: persona
+    attributes:
+      label: Persona
+      description: Nombre tal como aparece en el sitio
+    validations:
+      required: true
+  - type: input
+    id: enlace
+    attributes:
+      label: Enlace a su expediente en el sitio
+  - type: dropdown
+    id: sentido
+    attributes:
+      label: ¿El hecho es a favor o en contra?
+      options:
+        - En contra (proceso, sanción, investigación periodística, conflicto de interés)
+        - A favor (transparencia, denuncia con resultado oficial, reconocimiento independiente)
+    validations:
+      required: true
+  - type: dropdown
+    id: etapa
+    attributes:
+      label: Estado o etapa, si lo sabes
+      options:
+        - No sé
+        - Investigación periodística (sin proceso oficial)
+        - Indagación preliminar / previa
+        - Investigación formal, indagatoria, imputación o pliego de cargos
+        - Acusación o juicio
+        - Condena o sanción de primera instancia (no en firme)
+        - Decisión en firme
+        - Archivado / absuelto / revocado
+        - Reconocimiento o premio
+  - type: textarea
+    id: hecho
+    attributes:
+      label: ¿Qué pasó?
+      description: Describe el hecho en 2–5 frases, de forma neutral (qué, cuándo, qué autoridad o medio).
+    validations:
+      required: true
+  - type: input
+    id: fecha
+    attributes:
+      label: Fecha del hecho
+      placeholder: AAAA-MM-DD (aproximada si no sabes el día)
+  - type: textarea
+    id: fuentes
+    attributes:
+      label: Fuentes (enlaces)
+      description: Una por línea. Preferimos fuentes oficiales o medios reconocidos.
+    validations:
+      required: true
+  - type: dropdown
+    id: credito
+    attributes:
+      label: Crédito
+      options:
+        - Mostrar mi usuario de GitHub
+        - Prefiero que sea anónimo
+  - type: checkboxes
+    id: confirmacion
+    attributes:
+      label: Confirmación
+      options:
+        - label: La información es verídica según las fuentes que adjunto y no incluye datos de familiares ni de menores.
+          required: true

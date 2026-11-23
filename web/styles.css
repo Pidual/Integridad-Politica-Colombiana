@@ -341,3 +341,10 @@ td { border-bottom: 1px solid var(--line); }
 .chip.warn { background: color-mix(in srgb, var(--r-avg) 14%, transparent); border-color: color-mix(in srgb, var(--r-avg) 45%, transparent); color: var(--r-avg); }
 
 [hidden] { display: none !important; }
+
+/* ---------- participación ciudadana ---------- */
+.btn-aportar { display: inline-block; margin-top: 10px; background: var(--red); color: #fff !important; font-weight: 700; font-size: 13px;
+  padding: 7px 14px; border-radius: 6px; text-decoration: none; }
+.btn-aportar:hover { filter: brightness(1.1); text-decoration: none; }
+.debate { margin-top: 4px; }
+.giscus-slot { margin-top: 14px; }
