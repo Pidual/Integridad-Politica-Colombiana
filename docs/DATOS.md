@@ -29,6 +29,16 @@ Until the roster is loaded, the site shows the office name ("Alcaldía de X").
 | `secop.py` | SECOP II contracts (`jbjy-vk9h`), SECOP II processes (`p6dx-8zbt`), SECOP I (`f789-7hwg`) | datos.gov.co API, aggregated server-side | `contratacion_directa`, `oferente_unico`, `prorrogas` |
 | `dnp.py` | DNP MDM 2016–2020 (`nkjx-rsq7`) + Excel files listed in `data/sources/dnp.json` | API + file download | `mdm`, `mdm_delta`, `mdd`, `idf`, `ejecucion_inversion`, Ley 617 `categoria`, DNP `grupo_dnp` |
 
+| `congreso.py` | Official Senate directory (senado.gov.co, A–Z) + House roster (datos.gov.co `5pt5-nxdp`, columns shifted by one and fixed in code) | HTML scrape / API | Rosters 2026–2030 with party; official photos cached in `web/img/senado/` |
+| `senado.py` | leyes.senado.gov.co JSON API (`api/search_pdly.php`, `api/get_detalle_pdly.php`) + Secretaría General plenary documents (secretariasenado.gov.co) | JSON + HTML | `proyectos_autor`, `proyectos_ley`, `ponencias`, `debates_control`, `proposiciones`; declared impediments (info only) |
+
+Senate: `python -m data.build --congreso` refreshes rosters and activity (about 8 minutes the first time, cached afterwards).
+Names are matched against the official roster by shared words, tolerating typos.
+`data/processed/senado_sin_emparejar.json` lists what didn't match: mostly House co-authors
+and party- or package-level documents.
+There is no structured data for Senate attendance or roll-call votes (they only exist in Gaceta PDFs).
+So "Asistencia y voto" is missing, and coverage sits right at the 50% threshold.
+
 ### Key design decisions
 
 - **Join key is the NIT, not the name.** A municipality's NIT covers all its

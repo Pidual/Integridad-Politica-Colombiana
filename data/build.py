@@ -25,7 +25,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scoring"))
 
-from data.connectors import dnp, reference, secop  # noqa: E402
+from data.connectors import congreso, dnp, reference, secop, senado  # noqa: E402
 import engine  # noqa: E402
 
 MANDATARIOS = ROOT / "data" / "reference" / "mandatarios.csv"
@@ -113,11 +113,90 @@ def merge(years: list[int], ref: dict, dnp_data: dict, secop_by_year: dict) -> l
     return records
 
 
+def slug(text: str) -> str:
+    """Stable, URL-friendly id: 'Bernal Rincón Zandra María' -> 'bernal-rincon-zandra-maria'."""
+    import re
+    import unicodedata
+    t = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower()
+    return re.sub(r"[^a-z0-9]+", "-", t).strip("-")
+
+
+def senado_records() -> list[dict]:
+    """Senadores 2026–2030 (temporada 2026 = legislatura 2026–2027), si ya se corrió el conector."""
+    path = ROOT / "data" / "processed" / "senado_2026_2027.json"
+    roster_path = ROOT / "data" / "reference" / "senado_2026_2030.csv"
+    if not path.exists() or not roster_path.exists():
+        return []
+    act = json.loads(path.read_text(encoding="utf-8"))
+    wiki_path = ROOT / "data" / "reference" / "wikipedia_senado.json"
+    wiki = json.loads(wiki_path.read_text(encoding="utf-8")) if wiki_path.exists() else {}
+    with open(roster_path, encoding="utf-8", newline="") as f:
+        roster = list(csv.DictReader(f))
+    fuente = {"proyectos_autor": "leyes.senado.gov.co – legislatura 2026–2027",
+              "proyectos_ley": "leyes.senado.gov.co – legislatura 2026–2027",
+              "ponencias": "leyes.senado.gov.co – ponentes 1er/2º debate",
+              "debates_control": "Secretaría General – proposiciones de control político en plenaria",
+              "proposiciones": "Secretaría General – proposiciones aprobadas en plenaria"}
+    out = []
+    for i, r in enumerate(roster, 1):
+        a = act["senadores"].get(r["nombre"], {})
+        out.append({
+            "id": "senado-2026-" + slug(r["nombre"]),
+            "nombre": r["nombre"],
+            "titular_identificado": True,
+            "rol": "senador",
+            "entidad": "Senado de la República",
+            "departamento": "Nacional",
+            "partido": r["partido"] or "—",
+            "periodo": "2026-2030",
+            "temporada": 2026,
+            "foto": r.get("foto") or None,
+            "metricas": {k: a[k] for k in fuente if k in a},
+            "fuentes": fuente,
+            "extra": {"impedimentos_declarados_plenaria": a.get("_impedimentos", 0),
+                      "proyectos_revisados": act["meta"]["proyectos"],
+                      "plenarias_revisadas": act["meta"]["sesiones"]},
+            "perfil": ({k: wiki[r["nombre"]].get(k) for k in ("titulo", "url", "descripcion", "extracto", "editado")}
+                       if r["nombre"] in wiki else None),
+            "tarjetas": [],
+        })
+    return out
+
+
+EVENTOS = ROOT / "data" / "eventos" / "eventos.json"
+
+
+def attach_events(records: list[dict], solo_revisados: bool = False) -> int:
+    """Attach curated integrity events (data/eventos/eventos.json) to records by person name + role."""
+    if not EVENTOS.exists():
+        return 0
+    events = json.loads(EVENTOS.read_text(encoding="utf-8"))["eventos"]
+    if solo_revisados:
+        events = [e for e in events if e.get("revisado")]
+    by_key: dict[tuple[str, str], list] = {}
+    for e in events:
+        by_key.setdefault((slug(e["persona"]), e.get("rol", "")), []).append(e)
+    n = 0
+    for r in records:
+        evs = by_key.get((slug(r["nombre"]), r["rol"]), [])
+        if evs:
+            r["eventos"] = evs
+            n += len(evs)
+    known = {(slug(r["nombre"]), r["rol"]) for r in records}
+    for k in by_key:
+        if k not in known:
+            print(f"  ! eventos sin persona: {k}")
+    return n
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--years", type=int, nargs="+", default=[2020, 2021, 2024, 2025])
     ap.add_argument("--refresh", action="store_true", help="vuelve a descargar todo (ignora caché)")
     ap.add_argument("--skip-secop", action="store_true")
+    ap.add_argument("--congreso", action="store_true", help="re-descarga listados y actividad del Senado")
+    ap.add_argument("--solo-revisados", action="store_true",
+                    help="para PUBLICAR: incluye solo eventos de integridad con revisado=true")
     args = ap.parse_args(argv)
 
     ref = reference.build(args.refresh) if args.refresh or not reference.OUT.exists() else reference.load()
@@ -128,11 +207,19 @@ def main(argv=None):
             secop_by_year[y] = secop.build(y, ref["entidades"], args.refresh)
 
     records = merge(args.years, ref, dnp_data, secop_by_year)
+    if args.congreso:
+        congreso.build(args.refresh)
+        senado.build(args.refresh)
+    records += senado_records()
+    print(f"eventos de integridad asociados: {attach_events(records, args.solo_revisados)}")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({
         "demo": False,
-        "aviso": ("Datos reales de fuentes públicas (DNP, SECOP II, Contaduría). Se califica el CARGO por temporada; "
-                  "tarjetas disciplinarias aún no integradas."),
+        "aviso": ("Datos reales de fuentes públicas. Senado 2026–2030: la nota es de INTEGRIDAD (bitácora de escándalos, "
+                  "procesos y sanciones con fuentes, base 8, +/− por evento); la actividad legislativa es informativa. "
+                  + ("Solo se publican eventos verificados por el equipo editorial. " if args.solo_revisados else
+                     "VISTA INTERNA: incluye eventos aún no revisados. ")
+                  + "Alcaldías y gobernaciones: rendimiento por temporada."),
         "temporadas": args.years,
         "politicos": records,
     }, ensure_ascii=False, indent=1), encoding="utf-8")

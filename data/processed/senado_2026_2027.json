@@ -1,0 +1,826 @@
+{
+ "meta": {
+  "legislatura": "2026-2027",
+  "proyectos": 337,
+  "documentos_plenaria": 345,
+  "sesiones": 32
+ },
+ "senadores": {
+  "Agudelo García Ana Paola": {
+   "proyectos_autor": 27,
+   "proyectos_ley": 0,
+   "ponencias": 6,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Ahumada García Laura Cristina": {
+   "proyectos_autor": 9,
+   "proyectos_ley": 0,
+   "ponencias": 0,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 5
+  },
+  "Amaya Rodríguez John Edickson": {
+   "proyectos_autor": 12,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 3
+  },
+  "Amín Saleme Fabio Raúl": {
+   "proyectos_autor": 6,
+   "proyectos_ley": 0,
+   "ponencias": 8,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Arana Cano Selmen David": {
+   "proyectos_autor": 11,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 4
+  },
+  "Arias Castillo Wilson Neber": {
+   "proyectos_autor": 7,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 1
+  },
+  "Avella Esquivel Aída Yolanda": {
+   "proyectos_autor": 6,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 2,
+   "proposiciones": 2,
+   "_impedimentos": 1
+  },
+  "Barguil Assis David Alejandro": {
+   "proyectos_autor": 20,
+   "proyectos_ley": 0,
+   "ponencias": 5,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Barrera Rodríguez Josué Alirio": {
+   "proyectos_autor": 8,
+   "proyectos_ley": 0,
+   "ponencias": 6,
+   "debates_control": 0,
+   "proposiciones": 3,
+   "_impedimentos": 2
+  },
+  "Barreto Castillo Miguel Ángel": {
+   "proyectos_autor": 34,
+   "proyectos_ley": 0,
+   "ponencias": 5,
+   "debates_control": 2,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Barreto Triana Santiago": {
+   "proyectos_autor": 9,
+   "proyectos_ley": 0,
+   "ponencias": 10,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Baute González Gonzalo Dimas": {
+   "proyectos_autor": 6,
+   "proyectos_ley": 0,
+   "ponencias": 8,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 5
+  },
+  "Benavides Mora Carlos Alberto": {
+   "proyectos_autor": 22,
+   "proyectos_ley": 0,
+   "ponencias": 5,
+   "debates_control": 0,
+   "proposiciones": 6,
+   "_impedimentos": 1
+  },
+  "Benavides Solarte Diela Liliana": {
+   "proyectos_autor": 9,
+   "proyectos_ley": 0,
+   "ponencias": 0,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Bermeo Rodríguez John Alejandro": {
+   "proyectos_autor": 2,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Bernal Rincón Zandra María": {
+   "proyectos_autor": 22,
+   "proyectos_ley": 0,
+   "ponencias": 7,
+   "debates_control": 2,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Besaile Fayad John Moisés": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 7,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Blel Scaf Nadya Georgette": {
+   "proyectos_autor": 19,
+   "proyectos_ley": 0,
+   "ponencias": 6,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Cabrales Baquero Enrique": {
+   "proyectos_autor": 26,
+   "proyectos_ley": 0,
+   "ponencias": 4,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Cadavid Márquez Hernán Darío": {
+   "proyectos_autor": 10,
+   "proyectos_ley": 0,
+   "ponencias": 12,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Caicedo Callejas Juan Fernando": {
+   "proyectos_autor": 30,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 4,
+   "_impedimentos": 1
+  },
+  "Caicedo Carabali Martín Alonso": {
+   "proyectos_autor": 6,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Caicedo Omar Cármen Patricia": {
+   "proyectos_autor": 4,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Carrillo Mendoza Wilmer Ramiro": {
+   "proyectos_autor": 2,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Castellanos Rodríguez Sara Jimena": {
+   "proyectos_autor": 7,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Cepeda Castro Iván": {
+   "proyectos_autor": 6,
+   "proyectos_ley": 0,
+   "ponencias": 4,
+   "debates_control": 2,
+   "proposiciones": 2,
+   "_impedimentos": 0
+  },
+  "Chindoy Jamioy Sandra Claudia": {
+   "proyectos_autor": 11,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 2,
+   "_impedimentos": 0
+  },
+  "Contreras Jiménez Yaini Isabel": {
+   "proyectos_autor": 6,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 1
+  },
+  "Corcho Mejía Diana Carolina": {
+   "proyectos_autor": 6,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 2,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Correa Jiménez Antonio José": {
+   "proyectos_autor": 28,
+   "proyectos_ley": 0,
+   "ponencias": 8,
+   "debates_control": 0,
+   "proposiciones": 4,
+   "_impedimentos": 1
+  },
+  "Correa Nuttin Julia": {
+   "proyectos_autor": 25,
+   "proyectos_ley": 0,
+   "ponencias": 6,
+   "debates_control": 0,
+   "proposiciones": 3,
+   "_impedimentos": 0
+  },
+  "Cuasapud Chaspuengal Jesús Omero": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "De La Hoz García Orlando Miguel": {
+   "proyectos_autor": 6,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Deluque Zuleta Alfredo Rafael": {
+   "proyectos_autor": 11,
+   "proyectos_ley": 0,
+   "ponencias": 15,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Díaz Mateus Luis Eduardo": {
+   "proyectos_autor": 8,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 5
+  },
+  "Enriquez Caicedo Carlos Eduardo": {
+   "proyectos_autor": 0,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Escaf Tijerino Agmeth José": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Escobar Ortiz Wilder Iberson": {
+   "proyectos_autor": 5,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 1
+  },
+  "Espinal Ramírez Juan Fernando": {
+   "proyectos_autor": 34,
+   "proyectos_ley": 0,
+   "ponencias": 9,
+   "debates_control": 0,
+   "proposiciones": 5,
+   "_impedimentos": 0
+  },
+  "Espinosa Oliver Héctor Olimpo": {
+   "proyectos_autor": 4,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 2,
+   "proposiciones": 3,
+   "_impedimentos": 0
+  },
+  "Espitia Cabrales Edgardo Miguel": {
+   "proyectos_autor": 4,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Farelo Daza Carlos Mario": {
+   "proyectos_autor": 12,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 2,
+   "_impedimentos": 0
+  },
+  "Flórez Hernández Alex Xavier": {
+   "proyectos_autor": 6,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Flórez Porras Pedro Hernando": {
+   "proyectos_autor": 30,
+   "proyectos_ley": 0,
+   "ponencias": 8,
+   "debates_control": 0,
+   "proposiciones": 5,
+   "_impedimentos": 1
+  },
+  "Forero Molina Andrés Eduardo": {
+   "proyectos_autor": 24,
+   "proyectos_ley": 0,
+   "ponencias": 6,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Fortich Sánchez Laura Ester": {
+   "proyectos_autor": 1,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 1
+  },
+  "Gallego Arroyave Leonardo de Jesús": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Garcés Aljure Christian Munir": {
+   "proyectos_autor": 23,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Garcés Rojas Juan Carlos": {
+   "proyectos_autor": 5,
+   "proyectos_ley": 0,
+   "ponencias": 4,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "García Gómez Juan Carlos": {
+   "proyectos_autor": 10,
+   "proyectos_ley": 0,
+   "ponencias": 9,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "García Soto Ana Paola": {
+   "proyectos_autor": 10,
+   "proyectos_ley": 0,
+   "ponencias": 5,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "García Turbay Lidio Arturo": {
+   "proyectos_autor": 0,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Guerra López María Angélica": {
+   "proyectos_autor": 42,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Guevara Villabon Carlos Eduardo": {
+   "proyectos_autor": 22,
+   "proyectos_ley": 0,
+   "ponencias": 13,
+   "debates_control": 0,
+   "proposiciones": 2,
+   "_impedimentos": 0
+  },
+  "Gómez Martínez Enrique": {
+   "proyectos_autor": 5,
+   "proyectos_ley": 0,
+   "ponencias": 9,
+   "debates_control": 0,
+   "proposiciones": 2,
+   "_impedimentos": 2
+  },
+  "Gómez Medina José Nicolás": {
+   "proyectos_autor": 2,
+   "proyectos_ley": 0,
+   "ponencias": 13,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Gómez Paz Cristian Kevin": {
+   "proyectos_autor": 9,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 1,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Henríquez Pinedo Honorio Miguel": {
+   "proyectos_autor": 15,
+   "proyectos_ley": 0,
+   "ponencias": 4,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Hernández Silva Yuly Esmeralda": {
+   "proyectos_autor": 13,
+   "proyectos_ley": 0,
+   "ponencias": 6,
+   "debates_control": 1,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Hurtado Sánchez Norma": {
+   "proyectos_autor": 18,
+   "proyectos_ley": 0,
+   "ponencias": 17,
+   "debates_control": 0,
+   "proposiciones": 3,
+   "_impedimentos": 0
+  },
+  "Jurado Palomino Mary": {
+   "proyectos_autor": 5,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Lobo Chinchilla Didier": {
+   "proyectos_autor": 5,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Londoño Ocampo María Eugenia": {
+   "proyectos_autor": 7,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Lopera Monsalve María Eugenia": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 1
+  },
+  "López Rodríguez Nelson Javier": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 0,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 1
+  },
+  "Macea Gómez José Gutemberg": {
+   "proyectos_autor": 1,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 2,
+   "_impedimentos": 0
+  },
+  "Meisel Vergara Carlos Manuel": {
+   "proyectos_autor": 8,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Mejía Nuñez Luis Alfonso": {
+   "proyectos_autor": 14,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Monedero Rivera Álvaro Henry": {
+   "proyectos_autor": 9,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Montoya Montoya Santiago": {
+   "proyectos_autor": 10,
+   "proyectos_ley": 0,
+   "ponencias": 5,
+   "debates_control": 1,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Moreno Hurtado Gustavo Adolfo": {
+   "proyectos_autor": 12,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 1,
+   "proposiciones": 4,
+   "_impedimentos": 0
+  },
+  "Nieto Loaiza Rafael": {
+   "proyectos_autor": 20,
+   "proyectos_ley": 0,
+   "ponencias": 8,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Noreña Arboleda María Irma": {
+   "proyectos_autor": 5,
+   "proyectos_ley": 0,
+   "ponencias": 6,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 1
+  },
+  "Ocampo Giraldo Jorge Alejandro": {
+   "proyectos_autor": 4,
+   "proyectos_ley": 0,
+   "ponencias": 0,
+   "debates_control": 0,
+   "proposiciones": 4,
+   "_impedimentos": 0
+  },
+  "Omaña Ortiz Deyci Alejandra": {
+   "proyectos_autor": 16,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Osorio Marquéz Deisy Johana": {
+   "proyectos_autor": 18,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 1
+  },
+  "Padilla Villarraga Andrea": {
+   "proyectos_autor": 6,
+   "proyectos_ley": 0,
+   "ponencias": 4,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Pedraza Sandoval Jennifer Dalley": {
+   "proyectos_autor": 5,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 1,
+   "proposiciones": 2,
+   "_impedimentos": 0
+  },
+  "Peralta Epieyú Martha Isabel": {
+   "proyectos_autor": 12,
+   "proyectos_ley": 0,
+   "ponencias": 4,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Pineda García Marcos Daniel": {
+   "proyectos_autor": 11,
+   "proyectos_ley": 0,
+   "ponencias": 7,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Posada Caicedo María Clara": {
+   "proyectos_autor": 8,
+   "proyectos_ley": 0,
+   "ponencias": 7,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Pulgar Daza Yessid Enrique": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 4,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Pulido Hernández Jonathan Ferney": {
+   "proyectos_autor": 9,
+   "proyectos_ley": 0,
+   "ponencias": 8,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Quintero Cardona Esteban": {
+   "proyectos_autor": 37,
+   "proyectos_ley": 0,
+   "ponencias": 6,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Racero Mayorca David Ricardo": {
+   "proyectos_autor": 19,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 0,
+   "proposiciones": 2,
+   "_impedimentos": 0
+  },
+  "Restrepo Carmona Daniel": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Rodríguez Chaparro Walter Alfonso": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 1,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Rodríguez Prieto Germán Andrés": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 5,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Rua Sánchez Luis Carlos": {
+   "proyectos_autor": 7,
+   "proyectos_ley": 0,
+   "ponencias": 6,
+   "debates_control": 1,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Silva Idrobo Ferney": {
+   "proyectos_autor": 23,
+   "proyectos_ley": 0,
+   "ponencias": 5,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Sánchez Arango Duvalier": {
+   "proyectos_autor": 8,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 2,
+   "proposiciones": 1,
+   "_impedimentos": 1
+  },
+  "Sánchez León Óscar Hernán": {
+   "proyectos_autor": 16,
+   "proyectos_ley": 0,
+   "ponencias": 5,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Torres Villalba Camilo Andrés": {
+   "proyectos_autor": 13,
+   "proyectos_ley": 0,
+   "ponencias": 5,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Vargas Torrado Alix Yirley": {
+   "proyectos_autor": 8,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Vargas Valdeleon Gersson": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 7,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Villalba Gómez María Lucia": {
+   "proyectos_autor": 3,
+   "proyectos_ley": 0,
+   "ponencias": 3,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 2
+  },
+  "Villamizar Meneses Óscar Leonardo": {
+   "proyectos_autor": 21,
+   "proyectos_ley": 0,
+   "ponencias": 7,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Virgüez Piraquive Manuel Antonio": {
+   "proyectos_autor": 22,
+   "proyectos_ley": 0,
+   "ponencias": 16,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Zuleta López Isabel Cristina": {
+   "proyectos_autor": 11,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 3,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Zuleta Murgas Claudia Margarita": {
+   "proyectos_autor": 31,
+   "proyectos_ley": 0,
+   "ponencias": 10,
+   "debates_control": 0,
+   "proposiciones": 1,
+   "_impedimentos": 0
+  },
+  "Zuluaga Navarro Kamelia Edith": {
+   "proyectos_autor": 8,
+   "proyectos_ley": 0,
+   "ponencias": 2,
+   "debates_control": 0,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  },
+  "Ávila Martínez Ariel Fernando": {
+   "proyectos_autor": 13,
+   "proyectos_ley": 0,
+   "ponencias": 7,
+   "debates_control": 1,
+   "proposiciones": 0,
+   "_impedimentos": 0
+  }
+ }
+}

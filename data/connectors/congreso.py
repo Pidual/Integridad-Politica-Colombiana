@@ -12,6 +12,8 @@ import csv
 import datetime as dt
 import html
 import re
+import unicodedata
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -76,8 +78,35 @@ def _write(path: Path, rows: list[dict], fuente: str):
             w.writerow({**r, "fuente": fuente, "consultado": today})
 
 
+IMG_DIR = Path(__file__).resolve().parents[2] / "web" / "img" / "senado"
+
+
+def download_photos(rows: list[dict], refresh: bool = False) -> None:
+    """Cache official photos next to the site; keep the remote URL if a download fails."""
+    IMG_DIR.mkdir(parents=True, exist_ok=True)
+    for r in rows:
+        url = r.get("foto")
+        if not url or not url.startswith("http"):
+            continue
+        slug = re.sub(r"[^a-z0-9]+", "-", unicodedata.normalize("NFKD", r["nombre"]).encode("ascii", "ignore").decode().lower()).strip("-")
+        ext = Path(urllib.parse.urlparse(url).path).suffix.lower() or ".jpg"
+        dest = IMG_DIR / f"{slug}{ext}"
+        if refresh or not dest.exists():
+            try:
+                req = urllib.request.Request(urllib.parse.quote(url, safe=":/%"), headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    if not resp.headers.get("Content-Type", "").startswith("image/"):
+                        continue
+                    dest.write_bytes(resp.read())
+            except Exception:
+                continue
+        r["foto_remota"] = url
+        r["foto"] = f"img/senado/{dest.name}"   # relative to web/index.html
+
+
 def build(refresh: bool = False) -> dict:
     sen = fetch_senado()
+    download_photos(sen, refresh)
     _write(REF / "senado_2026_2030.csv", sen, SENADO_URL)
     print(f"Senado 2026–2030: {len(sen)} senadores -> {REF / 'senado_2026_2030.csv'}")
     cam = fetch_camara(refresh)

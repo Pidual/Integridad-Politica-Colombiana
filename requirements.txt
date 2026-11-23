@@ -1,0 +1,1 @@
+pypdf==5.4.0  # leer actas de la Gaceta del Congreso (data/connectors/gaceta.py)

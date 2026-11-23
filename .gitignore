@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 .venv/
 data/raw/
+# Bitácora en revisión: NO subir sin revisión editorial (ver README)
+data/eventos/eventos.json

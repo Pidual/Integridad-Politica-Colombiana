@@ -1,0 +1,40 @@
+name: Solicitud de rectificación
+description: Reporta un dato incorrecto, desactualizado o incompleto sobre una persona del sitio.
+title: "Rectificación: "
+labels: ["rectificación"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por ayudarnos a corregir. Toda solicitud se revisa contra las fuentes.
+        Si eres la persona mencionada (o su equipo), puedes incluir tu versión: se publicará junto al evento.
+  - type: input
+    id: persona
+    attributes:
+      label: Persona
+      description: Nombre tal como aparece en el sitio
+    validations:
+      required: true
+  - type: input
+    id: enlace
+    attributes:
+      label: Enlace a su página en el sitio
+      placeholder: https://pidual.github.io/Integridad-Politica-Colombiana/#/p/...
+  - type: textarea
+    id: error
+    attributes:
+      label: ¿Qué está mal o qué falta?
+      description: Evento, cifra, fecha o estado procesal que debe corregirse (p. ej., un proceso fue archivado).
+    validations:
+      required: true
+  - type: textarea
+    id: soporte
+    attributes:
+      label: Soporte
+      description: Enlaces a decisiones judiciales, comunicados oficiales o notas de prensa que respalden la corrección.
+    validations:
+      required: true
+  - type: textarea
+    id: respuesta
+    attributes:
+      label: Versión o respuesta de la persona (opcional)

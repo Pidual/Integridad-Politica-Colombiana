@@ -53,3 +53,16 @@ tests/                     engine tests
 
 Missing metrics are `null` (they lower coverage, they don't count as zero).
 Adding a role or metric is a config change only.
+
+## Publicar (GitHub Pages, gratis)
+
+1. Revisar la bitácora de integridad: `python data/eventos/revisar.py` lista los pendientes;
+   `--ver ID` muestra un evento y sus fuentes; `--aprobar ID --por "Nombre"` lo aprueba.
+2. Construir la versión pública (solo eventos aprobados):
+   `python -m data.build --years 2020 2021 2024 2025 --solo-revisados`
+3. `git push` a `main`: el flujo `.github/workflows/pages.yml` publica `web/` en
+   https://pidual.github.io/Integridad-Politica-Colombiana/
+
+`data/eventos/eventos.json` está en `.gitignore` mientras contenga eventos sin revisar
+(el repositorio es público). Las solicitudes de rectificación llegan como Issues
+(plantilla `.github/ISSUE_TEMPLATE/rectificacion.yml`).

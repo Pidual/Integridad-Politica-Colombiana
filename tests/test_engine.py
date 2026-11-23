@@ -33,7 +33,7 @@ def by_id(out):
 class EngineTest(unittest.TestCase):
     def test_average_is_near_baseline(self):
         out = engine.compute(senators(), CONFIG)
-        ratings = [p["rating"] for p in out["politicos"]]
+        ratings = [p["rating_rendimiento"] for p in out["politicos"]]
         self.assertAlmostEqual(sum(ratings) / len(ratings), CONFIG["rating"]["baseline"], delta=0.6)
         self.assertTrue(all(1 <= r <= 10 for r in ratings))
 
@@ -46,20 +46,20 @@ class EngineTest(unittest.TestCase):
         recs = senators()
         recs[11]["tarjetas"] = [{"tipo": "roja"}]
         p = by_id(engine.compute(recs, CONFIG))["s11"]
-        self.assertLessEqual(p["rating"], CONFIG["cards"]["roja"]["rating_cap"])
-        self.assertLess(p["rating"], p["rating_sin_tarjetas"])
+        self.assertLessEqual(p["rating_rendimiento"], CONFIG["cards"]["roja"]["rating_cap"])
+        self.assertLess(p["rating_rendimiento"], p["rating_sin_tarjetas"])
 
     def test_open_investigation_does_not_penalize(self):
-        base = by_id(engine.compute(senators(), CONFIG))["s3"]["rating"]
+        base = by_id(engine.compute(senators(), CONFIG))["s3"]["rating_rendimiento"]
         recs = senators()
         recs[3]["tarjetas"] = [{"tipo": "investigacion"}]
-        self.assertEqual(by_id(engine.compute(recs, CONFIG))["s3"]["rating"], base)
+        self.assertEqual(by_id(engine.compute(recs, CONFIG))["s3"]["rating_rendimiento"], base)
 
     def test_low_coverage_is_not_rated(self):
         recs = senators()
         recs[0]["metricas"] = {"asistencia": 99}
         p = by_id(engine.compute(recs, CONFIG))["s0"]
-        self.assertIsNone(p["rating"])
+        self.assertIsNone(p["rating_rendimiento"])
         self.assertLess(p["cobertura"], CONFIG["rating"]["min_coverage"])
 
     def test_small_league_falls_back_to_role(self):
@@ -78,6 +78,32 @@ class EngineTest(unittest.TestCase):
         self.assertEqual(engine.league_of(rec, CONFIG["roles"]["alcalde"]), "G2 · Media-alta")
         rec = {"rol": "alcalde", "categoria": "6"}
         self.assertEqual(engine.league_of(rec, CONFIG["roles"]["alcalde"]), "Cat. 4–6")
+
+    def test_senate_headline_is_integrity(self):
+        recs = senators()
+        recs[0]["eventos"] = [{"nivel": 2, "estado": "abierto"}, {"nivel": 3, "estado": "preliminar"},
+                              {"nivel": 2, "estado": "archivado"}, {"nivel": 2, "estado": "condena_no_firme"}]
+        out = by_id(engine.compute(recs, CONFIG))
+        cfg = CONFIG["integridad"]
+        expected = cfg["base"] - cfg["niveles"]["2"]["resta"] - cfg["niveles"]["3"]["resta"] - cfg["resta_por_estado"]["condena_no_firme"]
+        self.assertAlmostEqual(out["s0"]["rating"], expected)
+        self.assertEqual(out["s1"]["rating"], cfg["base"])          # no events -> base
+        self.assertEqual(out["s0"]["integridad"]["n_eventos"], 4)
+        self.assertEqual(out["s0"]["rank_rol"], len(recs))            # lowest integrity ranks last
+
+    def test_integrity_floor(self):
+        evs = [{"nivel": 1, "estado": "en_firme"}] * 5
+        self.assertEqual(engine.integrity_score(evs, CONFIG["integridad"])["nota"], CONFIG["integridad"]["min"])
+
+    def test_positive_events_add_but_are_capped(self):
+        cfg = CONFIG["integridad"]
+        evs = [{"positivo": True, "tipo_positivo": "P2", "estado": "verificado"}] * 5
+        r = engine.integrity_score(evs, cfg)
+        self.assertEqual(r["suma_total"], cfg["tope_positivos"])
+        self.assertEqual(r["nota"], min(cfg["max"], cfg["base"] + cfg["tope_positivos"]))
+        mixed = engine.integrity_score([{"positivo": True, "tipo_positivo": "P1", "estado": "verificado"},
+                                        {"nivel": 2, "estado": "abierto"}], cfg)
+        self.assertAlmostEqual(mixed["nota"], cfg["base"] + cfg["positivos"]["P1"]["suma"] - cfg["niveles"]["2"]["resta"])
 
 
 if __name__ == "__main__":

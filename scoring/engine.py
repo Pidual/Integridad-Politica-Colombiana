@@ -77,6 +77,50 @@ def league_of(record: dict, role_cfg: dict) -> str:
     return "Sin liga"
 
 
+def integrity_score(eventos: list[dict], cfg: dict) -> dict:
+    """Integrity grade from a curated event ledger.
+
+    Starts at `base` (10) and subtracts per event according to its evidence level
+    (1 = decisión en firme, 2 = proceso formal abierto, 3 = investigación periodística
+    documentada). Events closed in the person's favour (archivado/absuelto/revocado)
+    are shown but subtract nothing. A 10 means "no findings in the sources reviewed",
+    not a certificate of honesty.
+    """
+    base = cfg.get("base", 10.0)
+    lo = cfg.get("min", 1.0)
+    levels = cfg.get("niveles", {})
+    favorable = set(cfg.get("estados_sin_resta", ["archivado", "absuelto", "revocado", "desmentido"]))
+    total, detalle = 0.0, []
+    pos_cfg = cfg.get("positivos", {})
+    pos_total = 0.0
+    for e in eventos:
+        if e.get("positivo"):
+            pc = pos_cfg.get(e.get("tipo_positivo"), {})
+            suma = 0.0 if e.get("estado") in favorable else float(pc.get("suma", 0.0))
+            pos_total += suma
+            detalle.append({**e, "suma": suma, "resta": 0.0, "nivel_label": pc.get("label", "")})
+            continue
+        lv = levels.get(str(e.get("nivel")), {})
+        by_state = cfg.get("resta_por_estado", {})
+        if e.get("estado") in favorable:
+            resta = 0.0
+        elif e.get("estado") in by_state:           # e.g. condena de primera instancia pesa más que un proceso abierto
+            resta = float(by_state[e["estado"]])
+        else:
+            resta = float(lv.get("resta", 0.0))
+        total += resta
+        detalle.append({**e, "resta": resta, "nivel_label": lv.get("label", "")})
+    # negatives first (most serious level first), then positives
+    detalle.sort(key=lambda x: (1 if x.get("positivo") else 0, x.get("nivel", 9), x.get("fecha", "")))
+    pos_total = min(pos_total, cfg.get("tope_positivos", pos_total))
+    hi = cfg.get("max", base)
+    return {"nota": round(clamp(base - total + pos_total, lo, hi), 2), "resta_total": round(total, 2),
+            "suma_total": round(pos_total, 2), "n_positivos": sum(1 for e in eventos if e.get("positivo")),
+            "n_negativos": sum(1 for e in eventos if not e.get("positivo")),
+            "eventos": detalle, "n_eventos": len(eventos),
+            "pendientes_revision": sum(1 for e in eventos if not e.get("revisado"))}
+
+
 def compute(records: list[dict], config: dict) -> dict:
     rc = config["rating"]
     roles = config["roles"]
@@ -167,6 +211,12 @@ def compute(records: list[dict], config: dict) -> dict:
             raw = clamp(rc["baseline"] + rc["scale"] * shrunk, rc["min"], rc["max"])
             rating = clamp(min(raw - penalty, cap), rc["min"], rc["max"])
 
+        # --- integrity: curated event ledger (escándalos, procesos, sanciones) ---
+        integ = integrity_score(r.get("eventos", []), config.get("integridad", {}))
+        rating_rendimiento = rating
+        if role.get("rating_principal") == "integridad":
+            rating = integ["nota"]
+
         ranked = [(k, v) for k, v in metrics_out.items() if v["percentil"] is not None]
         fortalezas = [k for k, v in sorted(ranked, key=lambda kv: -kv[1]["percentil"]) if v["percentil"] >= rc["strength_percentile"]][:4]
         debilidades = [k for k, v in sorted(ranked, key=lambda kv: kv[1]["percentil"]) if v["percentil"] <= rc["weakness_percentile"]][:4]
@@ -183,6 +233,9 @@ def compute(records: list[dict], config: dict) -> dict:
             "temporada": r["temporada"],
             "grupo_pares": len(peers),
             "rating": None if rating is None else round(rating, 2),
+            "rating_principal": role.get("rating_principal", "rendimiento"),
+            "rating_rendimiento": None if rating_rendimiento is None else round(rating_rendimiento, 2),
+            "integridad": integ,
             "rating_sin_tarjetas": None if raw is None else round(raw, 2),
             "penalizacion": round(penalty, 2),
             "cobertura": round(coverage, 3),
@@ -192,7 +245,7 @@ def compute(records: list[dict], config: dict) -> dict:
             "fortalezas": fortalezas,
             "debilidades": debilidades,
             # passthrough metadata (present in real data)
-            **{k: r[k] for k in ("periodo", "grupo_dnp", "fuentes", "secop", "titular_identificado") if k in r},
+            **{k: r[k] for k in ("codigo", "periodo", "grupo_dnp", "fuentes", "secop", "titular_identificado", "foto", "extra", "perfil") if k in r},
         })
 
     # --- rankings --------------------------------------------------------
@@ -212,6 +265,7 @@ def compute(records: list[dict], config: dict) -> dict:
             "version": config["version"],
             "rating": rc,
             "cards": config["cards"],
+            "integridad": config.get("integridad", {}),
             "roles": {
                 k: {
                     "label": v["label"],
@@ -240,10 +294,18 @@ def main(argv=None):
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    body = json.dumps(out, ensure_ascii=False, indent=1)
     # .js (no .json) para que web/index.html abra directo con file:// sin servidor.
-    out_path.write_text(f"window.RATINGS = {body};\n", encoding="utf-8")
-    out_path.with_suffix(".json").write_text(body, encoding="utf-8")
+    # Compacto: es lo que descarga cada visitante del sitio.
+    compact = json.dumps(out, ensure_ascii=False, separators=(",", ":"))
+    out_path.write_text(f"window.RATINGS = {compact};\n", encoding="utf-8")
+    # Copia legible para revisión/diffs, fuera de la carpeta publicada.
+    readable = ROOT / "data" / "real" / "ratings.json" if "real" in str(args.data) else out_path.with_suffix(".json")
+    if readable.parent != out_path.parent:
+        stale = out_path.with_suffix(".json")
+        if stale.exists():
+            stale.unlink()
+    readable.parent.mkdir(parents=True, exist_ok=True)
+    readable.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     rated = sum(1 for p in out["politicos"] if p["rating"] is not None)
     print(f"{rated}/{len(out['politicos'])} políticos calificados -> {out_path}")
 
