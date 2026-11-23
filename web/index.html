@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integridad Política Colombiana</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="ball">●</span> Integridad Política <small>Colombia</small></div>
+  <label class="season">Temporada <select id="season"></select></label>
+</header>
+
+<div id="demo-banner" class="banner" hidden></div>
+
+<nav class="tabs" id="role-tabs" role="tablist"></nav>
+
+<main class="layout">
+  <section class="panel">
+    <div class="toolbar">
+      <div class="subtabs" id="cat-tabs"></div>
+      <div class="filters">
+        <input id="q" type="search" placeholder="Buscar nombre, entidad, partido…">
+        <select id="liga"></select>
+        <select id="partido"></select>
+        <label class="chk"><input id="only-rated" type="checkbox"> Solo con rating</label>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="grid"><thead></thead><tbody></tbody></table>
+    </div>
+    <p class="legend">
+      Rating 1–10, promedio = 6.0 dentro de cada liga.
+      <span class="card y"></span> amarilla (sanción leve en firme)
+      <span class="card r"></span> roja (sanción grave en firme)
+      <span class="var">VAR</span> proceso abierto, no resta.
+      Haz clic en una fila para ver el perfil.
+    </p>
+  </section>
+
+  <aside class="side">
+    <div id="profile" class="profile empty">Selecciona un político para ver su perfil.</div>
+    <div class="box">
+      <h3>Equipo de la temporada</h3>
+      <ol id="top5" class="top5"></ol>
+    </div>
+  </aside>
+</main>
+
+<footer class="foot">
+  Metodología: <code>docs/METODOLOGIA.md</code> · Fuentes: DNP, SECOP, Procuraduría, Contraloría, CNE, Congreso Visible, Función Pública.
+</footer>
+
+<script src="data/ratings.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+{
+  "version": "0.2.0",
+  "rating": {
+    "baseline": 6.0,
+    "scale": 1.5,
+    "min": 1.0,
+    "max": 10.0,
+    "z_cap": 3.0,
+    "shrinkage_k": 2.0,
+    "min_coverage": 0.5,
+    "min_peer_group": 8,
+    "strength_percentile": 80,
+    "weakness_percentile": 20
+  },
+  "cards": {
+    "amarilla": { "label": "Tarjeta amarilla", "penalty": 0.3, "description": "Sanción leve en firme: amonestación, multa disciplinaria, hallazgo fiscal con incidencia, sanción del CNE por reporte de campaña." },
+    "roja": { "label": "Tarjeta roja", "penalty": 1.5, "rating_cap": 4.5, "description": "Sanción grave en firme: destitución o inhabilidad (Procuraduría), fallo de responsabilidad fiscal (Contraloría), pérdida de investidura (Consejo de Estado), condena penal ejecutoriada." },
+    "investigacion": { "label": "En investigación (VAR)", "penalty": 0.0, "description": "Proceso abierto, sin decisión en firme. Se muestra pero no resta: presunción de inocencia." }
+  },
+  "roles": {
+    "alcalde": {
+      "label": "Alcaldes",
+      "position": "Ejecutivo municipal",
+      "league_field": ["grupo_dnp", "categoria"],
+      "leagues": {
+        "grupo_dnp": { "C": "Ciudades", "G1": "G1 · Capacidad alta", "G2": "G2 · Media-alta", "G3": "G3 · Media", "G4": "G4 · Media-baja", "G5": "G5 · Baja" },
+        "categoria": { "Especial": "Cat. Especial–1", "1": "Cat. Especial–1", "2": "Cat. 2–3", "3": "Cat. 2–3", "4": "Cat. 4–6", "5": "Cat. 4–6", "6": "Cat. 4–6" }
+      },
+      "categories": {
+        "gestion":      { "label": "Gestión",       "weight": 0.35 },
+        "fiscal":       { "label": "Fiscal",        "weight": 0.20 },
+        "contratacion": { "label": "Contratación",  "weight": 0.25 },
+        "ciudadania":   { "label": "Ciudadanía",    "weight": 0.20 }
+      },
+      "metrics": {
+        "mdm":                  { "label": "Medición Desempeño Municipal", "category": "gestion", "weight": 3, "direction": 1, "unit": "pts", "source": "DNP – MDM" },
+        "mdm_delta":            { "label": "Cambio MDM vs. inicio de mandato", "category": "gestion", "weight": 3, "direction": 1, "unit": "pts", "source": "DNP – MDM" },
+        "plan_desarrollo":      { "label": "Cumplimiento plan de desarrollo", "category": "gestion", "weight": 2, "direction": 1, "unit": "%", "source": "DNP – Kit/Seguimiento planes territoriales" },
+        "homicidios_delta":     { "label": "Cambio tasa homicidios (x100k)", "category": "gestion", "weight": 2, "direction": -1, "unit": "pts", "source": "Policía Nacional / Medicina Legal" },
+        "saber11_delta":        { "label": "Cambio puntaje Saber 11", "category": "gestion", "weight": 1, "direction": 1, "unit": "pts", "source": "ICFES" },
+        "idf":                  { "label": "Índice de Desempeño Fiscal", "category": "fiscal", "weight": 3, "direction": 1, "unit": "pts", "source": "DNP – IDF" },
+        "ejecucion_inversion":  { "label": "Ejecución presupuesto de inversión", "category": "fiscal", "weight": 2, "direction": 1, "unit": "%", "source": "CHIP / FUT – Contaduría" },
+        "contratacion_directa": { "label": "Contratación directa (% valor)", "category": "contratacion", "weight": 3, "direction": -1, "unit": "%", "source": "SECOP I/II – datos.gov.co" },
+        "oferente_unico":       { "label": "Procesos con oferente único", "category": "contratacion", "weight": 3, "direction": -1, "unit": "%", "source": "SECOP II – datos.gov.co" },
+        "prorrogas":            { "label": "Contratos con prórroga", "category": "contratacion", "weight": 2, "direction": -1, "unit": "%", "source": "SECOP II – Contratos (días adicionados)" },
+        "indice_desempeno_inst":{ "label": "Índice Desempeño Institucional (FURAG)", "category": "contratacion", "weight": 1, "direction": 1, "unit": "pts", "source": "Función Pública – FURAG/MIPG" },
+        "aprobacion":           { "label": "Aprobación ciudadana", "category": "ciudadania", "weight": 3, "direction": 1, "unit": "%", "source": "Encuestas (Invamer, CNC) – solo ciudades grandes" },
+        "ley2013":              { "label": "Declaración bienes/conflictos (Ley 2013)", "category": "ciudadania", "weight": 1, "direction": 1, "unit": "bool", "source": "Función Pública – Aplicativo Ley 2013" }
+      }
+    },
+    "gobernador": {
+      "label": "Gobernadores",
+      "position": "Ejecutivo departamental",
+      "league_field": null,
+      "categories": {
+        "gestion":      { "label": "Gestión",       "weight": 0.35 },
+        "fiscal":       { "label": "Fiscal",        "weight": 0.20 },
+        "contratacion": { "label": "Contratación",  "weight": 0.25 },
+        "ciudadania":   { "label": "Ciudadanía",    "weight": 0.20 }
+      },
+      "metrics": {
+        "mdd":                  { "label": "Medición Desempeño Departamental", "category": "gestion", "weight": 4, "direction": 1, "unit": "pts", "source": "DNP – MDD" },
+        "plan_desarrollo":      { "label": "Cumplimiento plan de desarrollo", "category": "gestion", "weight": 3, "direction": 1, "unit": "%", "source": "DNP – Seguimiento planes territoriales" },
+        "homicidios_delta":     { "label": "Cambio tasa homicidios (x100k)", "category": "gestion", "weight": 2, "direction": -1, "unit": "pts", "source": "Policía Nacional / Medicina Legal" },
+        "saber11_delta":        { "label": "Cambio puntaje Saber 11", "category": "gestion", "weight": 2, "direction": 1, "unit": "pts", "source": "ICFES" },
+        "cobertura_vacunacion": { "label": "Cobertura vacunación (DPT)", "category": "gestion", "weight": 1, "direction": 1, "unit": "%", "source": "MinSalud – PAI" },
+        "idf":                  { "label": "Índice de Desempeño Fiscal", "category": "fiscal", "weight": 3, "direction": 1, "unit": "pts", "source": "DNP – IDF" },
+        "ejecucion_inversion":  { "label": "Ejecución presupuesto de inversión", "category": "fiscal", "weight": 2, "direction": 1, "unit": "%", "source": "CHIP / FUT – Contaduría" },
+        "regalias_ejecucion":   { "label": "Ejecución de regalías (SGR)", "category": "fiscal", "weight": 2, "direction": 1, "unit": "%", "source": "SGR – Gesproy / MapaRegalías" },
+        "contratacion_directa": { "label": "Contratación directa (% valor)", "category": "contratacion", "weight": 3, "direction": -1, "unit": "%", "source": "SECOP I/II – datos.gov.co" },
+        "oferente_unico":       { "label": "Procesos con oferente único", "category": "contratacion", "weight": 3, "direction": -1, "unit": "%", "source": "SECOP II – datos.gov.co" },
+        "prorrogas":            { "label": "Contratos con prórroga", "category": "contratacion", "weight": 2, "direction": -1, "unit": "%", "source": "SECOP II – Contratos (días adicionados)" },
+        "indice_desempeno_inst":{ "label": "Índice Desempeño Institucional (FURAG)", "category": "contratacion", "weight": 1, "direction": 1, "unit": "pts", "source": "Función Pública – FURAG/MIPG" },
+        "aprobacion":           { "label": "Aprobación ciudadana", "category": "ciudadania", "weight": 3, "direction": 1, "unit": "%", "source": "Encuestas (Invamer, CNC)" },
+        "ley2013":              { "label": "Declaración bienes/conflictos (Ley 2013)", "category": "ciudadania", "weight": 1, "direction": 1, "unit": "bool", "source": "Función Pública – Aplicativo Ley 2013" }
+      }
+    },
+    "senador": {
+      "label": "Senadores",
+      "position": "Legislativo nacional",
+      "league_field": null,
+      "categories": {
+        "legislativo":  { "label": "Producción legislativa", "weight": 0.35 },
+        "control":      { "label": "Control político",       "weight": 0.15 },
+        "disciplina":   { "label": "Asistencia y voto",      "weight": 0.25 },
+        "transparencia":{ "label": "Transparencia",          "weight": 0.25 }
+      },
+      "metrics": {
+        "proyectos_autor":      { "label": "Proyectos radicados como autor", "category": "legislativo", "weight": 1, "direction": 1, "unit": "n", "source": "Congreso Visible / Senado" },
+        "proyectos_ley":        { "label": "Proyectos convertidos en ley (goles)", "category": "legislativo", "weight": 3, "direction": 1, "unit": "n", "source": "Congreso Visible / Secretaría General" },
+        "ponencias":            { "label": "Ponencias radicadas (asistencias)", "category": "legislativo", "weight": 2, "direction": 1, "unit": "n", "source": "Gaceta del Congreso" },
+        "debates_control":      { "label": "Debates de control citados", "category": "control", "weight": 2, "direction": 1, "unit": "n", "source": "Gaceta del Congreso / Congreso Visible" },
+        "proposiciones":        { "label": "Proposiciones aprobadas", "category": "control", "weight": 1, "direction": 1, "unit": "n", "source": "Actas de plenaria" },
+        "asistencia":           { "label": "Asistencia a plenarias", "category": "disciplina", "weight": 3, "direction": 1, "unit": "%", "source": "Actas de plenaria / Congreso Visible" },
+        "participacion_votos":  { "label": "Participación en votaciones nominales", "category": "disciplina", "weight": 2, "direction": 1, "unit": "%", "source": "Votaciones nominales – Senado" },
+        "ley2013":              { "label": "Declaración bienes/conflictos (Ley 2013)", "category": "transparencia", "weight": 2, "direction": 1, "unit": "bool", "source": "Función Pública – Aplicativo Ley 2013" },
+        "impedimentos_declarados": { "label": "Impedimentos declarados cuando aplica", "category": "transparencia", "weight": 1, "direction": 1, "unit": "%", "source": "Gaceta del Congreso" },
+        "cuentas_claras_oportuno": { "label": "Reporte de campaña a tiempo", "category": "transparencia", "weight": 1, "direction": 1, "unit": "bool", "source": "CNE – Cuentas Claras" },
+        "chequeos_falsos":      { "label": "Afirmaciones calificadas falsas", "category": "transparencia", "weight": 1, "direction": -1, "unit": "n", "source": "Colombiacheck / La Silla Vacía (Detector)" }
+      }
+    },
+    "representante": {
+      "label": "Representantes",
+      "position": "Legislativo nacional",
+      "league_field": null,
+      "categories": {
+        "legislativo":  { "label": "Producción legislativa", "weight": 0.35 },
+        "control":      { "label": "Control político",       "weight": 0.15 },
+        "disciplina":   { "label": "Asistencia y voto",      "weight": 0.25 },
+        "transparencia":{ "label": "Transparencia",          "weight": 0.25 }
+      },
+      "metrics": {
+        "proyectos_autor":      { "label": "Proyectos radicados como autor", "category": "legislativo", "weight": 1, "direction": 1, "unit": "n", "source": "Congreso Visible / Cámara" },
+        "proyectos_ley":        { "label": "Proyectos convertidos en ley (goles)", "category": "legislativo", "weight": 3, "direction": 1, "unit": "n", "source": "Congreso Visible / Secretaría General" },
+        "ponencias":            { "label": "Ponencias radicadas (asistencias)", "category": "legislativo", "weight": 2, "direction": 1, "unit": "n", "source": "Gaceta del Congreso" },
+        "debates_control":      { "label": "Debates de control citados", "category": "control", "weight": 2, "direction": 1, "unit": "n", "source": "Gaceta del Congreso / Congreso Visible" },
+        "proposiciones":        { "label": "Proposiciones aprobadas", "category": "control", "weight": 1, "direction": 1, "unit": "n", "source": "Actas de plenaria" },
+        "asistencia":           { "label": "Asistencia a plenarias", "category": "disciplina", "weight": 3, "direction": 1, "unit": "%", "source": "Actas de plenaria / Congreso Visible" },
+        "participacion_votos":  { "label": "Participación en votaciones nominales", "category": "disciplina", "weight": 2, "direction": 1, "unit": "%", "source": "Votaciones nominales – Cámara" },
+        "ley2013":              { "label": "Declaración bienes/conflictos (Ley 2013)", "category": "transparencia", "weight": 2, "direction": 1, "unit": "bool", "source": "Función Pública – Aplicativo Ley 2013" },
+        "impedimentos_declarados": { "label": "Impedimentos declarados cuando aplica", "category": "transparencia", "weight": 1, "direction": 1, "unit": "%", "source": "Gaceta del Congreso" },
+        "cuentas_claras_oportuno": { "label": "Reporte de campaña a tiempo", "category": "transparencia", "weight": 1, "direction": 1, "unit": "bool", "source": "CNE – Cuentas Claras" },
+        "chequeos_falsos":      { "label": "Afirmaciones calificadas falsas", "category": "transparencia", "weight": 1, "direction": -1, "unit": "n", "source": "Colombiacheck / La Silla Vacía (Detector)" }
+      }
+    }
+  }
+}

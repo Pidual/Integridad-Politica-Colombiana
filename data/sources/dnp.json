@@ -1,0 +1,38 @@
+{
+  "_doc": "Archivos de resultados DNP. Cada entrada se descarga de 'url' (o se lee de 'path', relativo a data/). 'columnas' mapea métrica -> encabezado del archivo (sin importar mayúsculas, tildes ni espacios). Para años recientes (IDF 2021+ y MDM 2022+), exportar desde https://ciffit.dnp.gov.co/CIFFIT/ConsultasIDF o TerriData, guardar en data/raw/dnp/ y añadir una entrada con 'path'.",
+  "api": {
+    "mdm_historico": { "dataset": "nkjx-rsq7", "anios": [2016, 2017, 2018, 2019, 2020], "nota": "MDM total (codigo_variable 8) en datos.gov.co" }
+  },
+  "archivos": [
+    {
+      "id": "mdm_2021", "anio": 2021, "nivel": "municipio",
+      "url": "https://colaboracion.dnp.gov.co/CDT/Desarrollo%20Territorial/MDM/2021/MDM%20-%202021.xlsx",
+      "hoja": "Indicadores", "codigo": "Código DANE",
+      "columnas": { "mdm": "MDM", "grupo_dnp": "Grupo de capacidades" }
+    },
+    {
+      "id": "mdm_2020_grupos", "anio": 2020, "nivel": "municipio",
+      "url": "https://colaboracion.dnp.gov.co/CDT/Desarrollo%20Territorial/MDM/2020/MDM_2020_publicar.xlsx",
+      "hoja": 0, "codigo": "Código DANE",
+      "columnas": { "grupo_dnp": "Grupo" }
+    },
+    {
+      "id": "idf_2020_municipios", "anio": 2020, "nivel": "municipio",
+      "url": "https://colaboracion.dnp.gov.co/CDT/Desarrollo%20Territorial/Anexos%20Desempe%C3%B1o%20Fiscal%202020_Nueva%20Metodolog%C3%ADa.xlsx",
+      "hoja": "Municipios 2020", "codigo": "Codigo DANE",
+      "columnas": { "idf": "Nuevo IDF", "ejecucion_inversion": "Capacidad de Ejecución de Inversión", "categoria": "Categoría Ley 617" }
+    },
+    {
+      "id": "idf_2020_departamentos", "anio": 2020, "nivel": "departamento",
+      "url": "https://colaboracion.dnp.gov.co/CDT/Desarrollo%20Territorial/Anexos%20Desempe%C3%B1o%20Fiscal%202020_Nueva%20Metodolog%C3%ADa.xlsx",
+      "hoja": "Departamentos 2020", "codigo": "Codigo DANE",
+      "columnas": { "idf": "Nuevo IDF", "ejecucion_inversion": "Capacidad de Ejecución de Inversión", "categoria": "Categoría Ley 617" }
+    },
+    {
+      "id": "mdd_2021", "anio": 2021, "nivel": "departamento",
+      "url": "https://colaboracion.dnp.gov.co/CDT/Desarrollo%20Territorial/MDD/MDD%20-%202021.xlsx",
+      "hoja": "Indicadores", "codigo": "cod_dpto",
+      "columnas": { "mdd": "MDD" }
+    }
+  ]
+}
