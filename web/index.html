@@ -4,18 +4,45 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Integridad Política Colombiana</title>
+<meta name="description" content="Ratings de integridad y desempeño de políticos colombianos, con fuentes públicas.">
+<meta name="theme-color" content="#c8102e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,800&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="#/"><span class="ball">●</span> Integridad Política <small>Colombia</small></a>
-  <label class="season" id="season-wrap">Temporada <select id="season"></select></label>
+  <a class="brand" href="#/" aria-label="Integridad Política Colombiana — inicio">
+    <svg class="eye" viewBox="0 0 120 64" aria-hidden="true">
+      <path d="M4 32 C 28 4, 92 4, 116 32 C 92 60, 28 60, 4 32 Z" fill="none" stroke="#fff" stroke-width="6"/>
+      <circle cx="60" cy="32" r="16" fill="#fff"/><circle cx="60" cy="32" r="7" fill="#c8102e"/>
+    </svg>
+    <span class="brand-txt"><span class="brand-main">INTEGRIDAD</span><span class="brand-sub">Política · Colombia</span></span>
+  </a>
 </header>
 
 <div id="demo-banner" class="banner" hidden></div>
 
 <!-- ============ LISTADO ============ -->
 <div id="view-list">
+  <section class="poster" aria-label="Presentación">
+    <div class="poster-txt">
+      <p class="poster-kicker">La ciudadanía está observando</p>
+      <h1 class="poster-title">Vigila a tus<br>políticos</h1>
+      <p class="poster-sub">Alcaldes, gobernadores y senadores calificados con datos públicos: contratación, gestión, escándalos y procesos, cada dato con su fuente. Presunción de inocencia: un proceso abierto no es una condena.</p>
+    </div>
+    <svg class="poster-eye" viewBox="0 0 400 220" aria-hidden="true">
+      <path d="M10 110 C 100 0, 300 0, 390 110 C 300 220, 100 220, 10 110 Z" fill="#fff"/>
+      <circle cx="200" cy="110" r="74" fill="#c8102e"/>
+      <circle cx="200" cy="110" r="38" fill="#15161d"/>
+      <rect x="183" y="104" width="34" height="22" rx="2" fill="#fff"/>
+      <rect x="194" y="92" width="12" height="16" fill="#fff" stroke="#15161d" stroke-width="2"/>
+      <rect x="190" y="110" width="20" height="3" fill="#15161d"/>
+      <circle cx="222" cy="90" r="8" fill="#fff"/>
+    </svg>
+  </section>
+  <div class="ticker" aria-hidden="true"><span>Sigue el contrato <b>•</b> Cada voto cuenta <b>•</b> Ningún cargo está por encima de la ley <b>•</b> Datos abiertos, fuentes verificables <b>•</b> Sigue el contrato <b>•</b> Cada voto cuenta <b>•</b> Ningún cargo está por encima de la ley <b>•</b> Datos abiertos, fuentes verificables</span></div>
   <nav class="tabs" id="role-tabs" role="tablist"></nav>
 
   <main class="layout">
@@ -27,11 +54,13 @@
           <select id="liga"></select>
           <select id="partido"></select>
           <label class="chk"><input id="only-rated" type="checkbox"> Solo con rating</label>
+          <span class="view-toggle" id="view-toggle" hidden><button data-l="cards" class="on">Tarjetas</button><button data-l="table">Tabla</button></span>
         </div>
       </div>
       <div class="table-wrap">
         <table id="grid"><thead></thead><tbody></tbody></table>
       </div>
+      <div id="cards" class="cards-grid" hidden></div>
       <p class="legend">
         Rating 1–10, promedio = 6.0 dentro de cada liga.
         <span class="card y"></span> amarilla (sanción leve en firme)
@@ -43,7 +72,7 @@
 
     <aside class="side">
       <div class="box">
-        <h3>Equipo de la temporada</h3>
+        <h3>Los mejores</h3>
         <ol id="top5" class="top5"></ol>
       </div>
     </aside>

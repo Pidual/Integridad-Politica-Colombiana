@@ -10,7 +10,9 @@ Pasos:
   4. Une todo por (entidad, año) -> data/real/politicos.json  (formato del motor)
   5. Calcula ratings -> web/data/ratings.js
 
-Cada registro es el CARGO en una temporada (p. ej. "Alcaldía de Medellín, 2021").
+Cada registro final es la PERSONA en su CARGO durante todo su MANDATO (sin temporadas):
+p. ej. "Daniel Quintero, Alcaldía de Medellín, 2020–2023". Los años con datos se combinan
+en collapse_terms().
 El nombre del titular se agrega desde data/reference/mandatarios.csv si existe
 (columnas: codigo,periodo,nombre,partido,fuente). Sin titular se muestra el cargo.
 """
@@ -121,6 +123,51 @@ def slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", t).strip("-")
 
 
+HISTORIA = "historia"   # single "season": the whole record of each person
+
+
+def _mean(xs):
+    xs = [x for x in xs if isinstance(x, (int, float)) and not isinstance(x, bool)]
+    return round(sum(xs) / len(xs), 3) if xs else None
+
+
+def collapse_terms(records: list[dict]) -> list[dict]:
+    """Merge yearly records of the same office+term into one record for the whole term.
+
+    Metrics: mean of the available years, except deltas (last year = progress during the term).
+    SECOP volumes are summed. Sources list the years used.
+    """
+    from collections import defaultdict
+    groups = defaultdict(list)
+    for r in records:
+        groups[(r["rol"], r.get("codigo"), r["periodo"])].append(r)
+    out = []
+    for (rol, codigo, periodo), rs in groups.items():
+        rs.sort(key=lambda r: r["temporada"])
+        last = rs[-1]
+        years = [r["temporada"] for r in rs]
+        metrics, fuentes = {}, {}
+        for k in {k for r in rs for k in r["metricas"]}:
+            vals = [(r["temporada"], r["metricas"][k]) for r in rs if r["metricas"].get(k) is not None]
+            if not vals:
+                continue
+            metrics[k] = vals[-1][1] if k.endswith("_delta") else _mean([v for _, v in vals])
+            fuentes[k] = ", ".join(sorted({r["fuentes"].get(k, "") for r in rs if r["fuentes"].get(k)}))
+        for k in ("categoria", "grupo_dnp"):
+            if last["fuentes"].get(k):
+                fuentes.setdefault(k, last["fuentes"][k])
+        secs = [r["secop"] for r in rs if r.get("secop")]
+        secop = None
+        if secs:
+            secop = {"contratos": sum(x.get("contratos", 0) for x in secs),
+                     "contratos_secop1": sum(x.get("contratos_secop1", 0) for x in secs),
+                     "procesos_competitivos": sum(x.get("procesos_competitivos", 0) for x in secs),
+                     "valor_total": sum(x.get("valor_total", 0) for x in secs), "anios": years}
+        out.append({**last, "id": f"{codigo}-{periodo}", "temporada": HISTORIA, "anios": years,
+                    "metricas": metrics, "fuentes": fuentes, "secop": secop})
+    return out
+
+
 def senado_records() -> list[dict]:
     """Senadores 2026–2030 (temporada 2026 = legislatura 2026–2027), si ya se corrió el conector."""
     path = ROOT / "data" / "processed" / "senado_2026_2027.json"
@@ -149,7 +196,7 @@ def senado_records() -> list[dict]:
             "departamento": "Nacional",
             "partido": r["partido"] or "—",
             "periodo": "2026-2030",
-            "temporada": 2026,
+            "temporada": HISTORIA,
             "foto": r.get("foto") or None,
             "metricas": {k: a[k] for k in fuente if k in a},
             "fuentes": fuente,
@@ -206,7 +253,7 @@ def main(argv=None):
         for y in args.years:
             secop_by_year[y] = secop.build(y, ref["entidades"], args.refresh)
 
-    records = merge(args.years, ref, dnp_data, secop_by_year)
+    records = collapse_terms(merge(args.years, ref, dnp_data, secop_by_year))
     if args.congreso:
         congreso.build(args.refresh)
         senado.build(args.refresh)
@@ -219,7 +266,7 @@ def main(argv=None):
                   "procesos y sanciones con fuentes, base 8, +/− por evento); la actividad legislativa es informativa. "
                   + ("Solo se publican eventos verificados por el equipo editorial. " if args.solo_revisados else
                      "VISTA INTERNA: incluye eventos aún no revisados. ")
-                  + "Alcaldías y gobernaciones: rendimiento por temporada."),
+                  + "Alcaldías y gobernaciones: rendimiento por mandato (años con datos combinados)."),
         "temporadas": args.years,
         "politicos": records,
     }, ensure_ascii=False, indent=1), encoding="utf-8")

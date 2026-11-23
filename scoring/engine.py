@@ -245,7 +245,7 @@ def compute(records: list[dict], config: dict) -> dict:
             "fortalezas": fortalezas,
             "debilidades": debilidades,
             # passthrough metadata (present in real data)
-            **{k: r[k] for k in ("codigo", "periodo", "grupo_dnp", "fuentes", "secop", "titular_identificado", "foto", "extra", "perfil") if k in r},
+            **{k: r[k] for k in ("codigo", "periodo", "grupo_dnp", "fuentes", "secop", "titular_identificado", "foto", "extra", "perfil", "anios") if k in r},
         })
 
     # --- rankings --------------------------------------------------------

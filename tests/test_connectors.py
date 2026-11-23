@@ -96,6 +96,21 @@ class ConnectorTest(unittest.TestCase):
         self.assertEqual(rows, [{"nombre": "Pérez Gómez Ana", "partido": "Partido Liberal",
                                  "oficina": "Capitolio, Of. 1", "foto": "https://x/Fotos/a.jpg"}])
 
+    def test_collapse_terms_one_record_per_mandate(self):
+        def rec(y, mdm, delta, contratos):
+            return {"id": f"05001-{y}", "codigo": "05001", "rol": "alcalde", "periodo": "2020-2023", "temporada": y,
+                    "nombre": "X", "metricas": {"mdm": mdm, "mdm_delta": delta}, "fuentes": {"mdm": f"DNP MDM {y}"},
+                    "secop": {"contratos": contratos, "contratos_secop1": 0, "procesos_competitivos": 1, "valor_total": 10}}
+        out = build.collapse_terms([rec(2020, 80.0, 1.0, 100), rec(2021, 84.0, 3.0, 50)])
+        self.assertEqual(len(out), 1)
+        r = out[0]
+        self.assertEqual(r["id"], "05001-2020-2023")
+        self.assertEqual(r["temporada"], build.HISTORIA)
+        self.assertEqual(r["anios"], [2020, 2021])
+        self.assertAlmostEqual(r["metricas"]["mdm"], 82.0)      # mean of years
+        self.assertAlmostEqual(r["metricas"]["mdm_delta"], 3.0)  # last year = progress in the term
+        self.assertEqual(r["secop"]["contratos"], 150)           # volumes add up
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,13 +7,12 @@
     return;
   }
   const CFG = DATA.config;
-  const ROLES = Object.keys(CFG.roles);
+  // Orden de las pestañas: primero Senado, luego gobernaciones, alcaldías y Cámara.
+  const ORDER = ["senador", "gobernador", "alcalde", "representante"];
+  const ROLES = Object.keys(CFG.roles).sort((a, b) => (ORDER.indexOf(a) + 99 * (ORDER.indexOf(a) < 0)) - (ORDER.indexOf(b) + 99 * (ORDER.indexOf(b) < 0)));
   const hasData = (r) => DATA.politicos.some((p) => p.rol === r);
-  const SEASONS = [...new Set(DATA.politicos.map((p) => p.temporada))].sort((a, b) => b - a);
-  // default season: the one with most rated records (ties -> most recent)
-  const ratedIn = (s) => DATA.politicos.filter((p) => p.temporada === s && p.rating != null).length;
-  const defSeason = SEASONS.slice().sort((a, b) => ratedIn(b) - ratedIn(a) || b - a)[0];
-  const state = { role: ROLES[0], season: defSeason, view: "resumen", sort: "rating", asc: false, q: "", liga: "", partido: "", sel: null, onlyRated: false };
+  // Sin temporadas: cada registro es la persona en su cargo durante todo su mandato.
+  const state = { role: ROLES[0], view: "resumen", sort: "rating", asc: false, q: "", liga: "", partido: "", sel: null, onlyRated: false, layout: "cards" };
 
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -40,9 +39,8 @@
   }
 
   // ---------- header / tabs ----------
-  $("#season").innerHTML = SEASONS.map((y) => `<option value="${y}" ${y === state.season ? "selected" : ""}>${y}</option>`).join("");
-  $("#season").addEventListener("change", (e) => { state.season = +e.target.value; state.sel = null; render(); });
   $("#only-rated").addEventListener("change", (e) => { state.onlyRated = e.target.checked; renderTable(); });
+  $("#view-toggle").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { state.layout = b.dataset.l; renderTable(); } });
   if (DATA.meta?.demo || DATA.meta?.aviso) {
     const b = $("#demo-banner");
     b.hidden = false;
@@ -54,13 +52,6 @@
     const b = e.target.closest("button");
     if (!b) return;
     Object.assign(state, { role: b.dataset.role, view: "resumen", sort: "rating", asc: false, liga: "", partido: "", sel: null });
-    // jump to a season that has data for this role (latest with most ratings)
-    const roleSeasons = SEASONS.filter((y) => DATA.politicos.some((p) => p.rol === state.role && p.temporada === y));
-    if (roleSeasons.length && !roleSeasons.includes(state.season)) {
-      const rated = (y) => DATA.politicos.filter((p) => p.rol === state.role && p.temporada === y && p.rating != null).length;
-      state.season = roleSeasons.slice().sort((a, b) => rated(b) - rated(a) || b - a)[0];
-      $("#season").value = String(state.season);
-    }
     render();
   });
 
@@ -70,12 +61,18 @@
 
   const REPO = "https://github.com/Pidual/Integridad-Politica-Colombiana";
   const rectHref = (p) => `${REPO}/issues/new?template=rectificacion.yml&title=${encodeURIComponent("Rectificación: " + p.nombre)}&persona=${encodeURIComponent(p.nombre)}&enlace=${encodeURIComponent(location.href)}`;
+  // verdict colour for integrity grades: base 8 = neutral
+  const verdict = (p) => {
+    if (p.rating_principal !== "integridad" || p.rating == null) return "";
+    const base = (CFG.integridad && CFG.integridad.base) || 8;
+    return p.rating < base - 2 ? "bad" : p.rating < base ? "warn" : p.rating > base ? "good" : "";
+  };
   const isInteg = (rol) => (DATA.politicos.find((p) => p.rol === rol) || {}).rating_principal === "integridad";
   const ESTADO_LABEL = { sin_proceso: "Sin proceso", preliminar: "Indagación preliminar", abierto: "Proceso abierto",
     condena_no_firme: "Condena no en firme", en_firme: "En firme", archivado: "Archivado", absuelto: "Absuelto / negado",
     revocado: "Revocado", desmentido: "Desmentido" };
 
-  function rolePols() { return DATA.politicos.filter((p) => p.rol === state.role && p.temporada === state.season); }
+  function rolePols() { return DATA.politicos.filter((p) => p.rol === state.role); }
   const initials = (n) => String(n || "?").replace(/\(.*?\)/g, "").split(/\s+/).filter((w) => w && w[0] === w[0].toUpperCase() && !/^(de|del|la|los)$/i.test(w)).slice(0, 2).map((w) => w[0]).join("");
   const avatar = (p, big = false) => {
     const cls = "av" + (big === "hero" ? " av-hero" : big ? " av-big" : "");
@@ -178,6 +175,25 @@
         (Senado y Cámara) están en desarrollo; los datos de demo (<code>python scoring/generate_sample.py && python scoring/engine.py</code>) sí los incluyen.</td></tr>`;
       return;
     }
+    const useCards = isInteg(state.role) && state.view === "resumen" && state.layout === "cards";
+    $("#view-toggle").hidden = !(isInteg(state.role) && state.view === "resumen");
+    $("#view-toggle").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.l === state.layout));
+    $("#cards").hidden = !useCards;
+    $(".table-wrap").hidden = useCards;
+    if (useCards) {
+      $("#cards").innerHTML = rows.map((p) => {
+        const I = p.integridad || {};
+        const ev = [I.n_negativos ? `${I.n_negativos} en contra` : "", I.n_positivos ? `${I.n_positivos} a favor` : ""].filter(Boolean).join(" · ") || "Sin hallazgos registrados";
+        return `<a class="pcard ${verdict(p)}" href="${personHref(p)}">
+          <span class="pcard-rank">#${p.rank_rol ?? "–"}</span>
+          <div class="pcard-top">${avatar(p, true)}<div><div class="pcard-name">${esc(p.nombre)}</div>
+            <div class="pcard-sub">${esc(p.partido && p.partido !== "—" ? p.partido : "")}${p.periodo ? " · " + esc(p.periodo) : ""}</div></div></div>
+          <div class="pcard-score"><div><div class="pcard-k">Integridad</div><div class="pcard-v">${p.rating == null ? "N/D" : p.rating.toFixed(2)}</div></div>
+            <div class="pcard-ev">${ev}</div></div>
+          <span class="pcard-btn">Ver expediente</span></a>`;
+      }).join("") || '<p class="na" style="padding:16px">Sin resultados.</p>';
+      return;
+    }
     $("#grid tbody").innerHTML = rows.map((p, i) => `
       <tr data-id="${esc(p.id)}" class="${p.id === state.sel ? "sel" : ""}">
         <td class="num">${i + 1}</td>
@@ -209,7 +225,7 @@
   const num = (v) => (typeof v === "boolean" ? +v : v);
 
   function peersOf(p) {
-    const sameRole = DATA.politicos.filter((x) => x.rol === p.rol && x.temporada === p.temporada);
+    const sameRole = DATA.politicos.filter((x) => x.rol === p.rol);
     const sameLeague = sameRole.filter((x) => x.liga === p.liga);
     // the engine falls back to the whole role when a league is too small
     return sameLeague.length === p.grupo_pares ? sameLeague : sameRole;
@@ -217,7 +233,7 @@
 
   function history(p) {
     const same = p.codigo ? (x) => x.codigo === p.codigo && x.rol === p.rol : (x) => x.nombre === p.nombre && x.rol === p.rol;
-    return DATA.politicos.filter(same).sort((a, b) => b.temporada - a.temporada);
+    return DATA.politicos.filter(same).sort((a, b) => String(b.periodo).localeCompare(String(a.periodo)));
   }
 
   function pctClass(pc) {
@@ -233,7 +249,7 @@
     }
     const role = CFG.roles[p.rol];
     const peers = peersOf(p);
-    const rated = DATA.politicos.filter((x) => x.rol === p.rol && x.temporada === p.temporada && x.rating != null);
+    const rated = DATA.politicos.filter((x) => x.rol === p.rol && x.rating != null);
     document.title = `${p.nombre} · Integridad Política`;
 
     const tiles = [
@@ -267,8 +283,8 @@
 
     const lab = (k) => esc(role.metrics[k].label);
     const hist = history(p);
-    const histHtml = hist.length > 1 ? `<section class="panel pad"><h3>Historial</h3><table class="mini"><thead><tr><th class="l">Temporada</th><th class="l">Mandato</th><th class="l">Titular</th><th>Rating</th></tr></thead><tbody>
-      ${hist.map((h) => `<tr class="${h.id === p.id ? "sel" : ""}"><td class="l"><a href="${personHref(h)}">${h.temporada}</a></td><td class="l">${esc(h.periodo || "–")}</td><td class="l">${esc(h.titular_identificado === false ? "—" : h.nombre)}</td><td>${badge(h.rating)}</td></tr>`).join("")}
+    const histHtml = hist.length > 1 ? `<section class="panel pad"><h3>Historial</h3><table class="mini"><thead><tr><th class="l">Mandato</th><th class="l">Años con datos</th><th class="l">Titular</th><th>Rating</th></tr></thead><tbody>
+      ${hist.map((h) => `<tr class="${h.id === p.id ? "sel" : ""}"><td class="l"><a href="${personHref(h)}">${esc(h.periodo || "–")}</a></td><td class="l">${esc((h.anios || []).join(", ") || "–")}</td><td class="l">${esc(h.titular_identificado === false ? "—" : h.nombre)}</td><td>${badge(h.rating)}</td></tr>`).join("")}
       </tbody></table></section>` : "";
 
     let neigh = "";
@@ -282,20 +298,21 @@
     }
 
     el.innerHTML = `
-      <div class="crumbs"><a href="#/" data-back>← ${esc(role.label)} · temporada ${p.temporada}</a>
+      <div class="crumbs"><a href="#/" data-back>← ${esc(role.label)}</a>
         <a class="rect-btn" href="${rectHref(p)}" target="_blank" rel="noopener noreferrer">¿Encontraste un error? Solicitar rectificación</a></div>
-      <section class="hero panel">
+      <section class="hero panel ${verdict(p)}">
         ${avatar(p, "hero")}
         <div class="hero-txt">
-          <div class="src">${esc(role.position)}${p.periodo ? " · mandato " + esc(p.periodo) : ""} · temporada ${p.temporada}</div>
+          <span class="hero-kicker">Expediente</span>
+          <div class="src">${esc(role.position)}${p.periodo ? " · mandato " + esc(p.periodo) : ""}${p.anios && p.anios.length ? " · datos de " + esc(p.anios.join(", ")) : ""}</div>
           <h1>${esc(p.nombre)}</h1>
           <div class="hero-sub">${subtitle(p)}</div>
           <div>${cardsHtml(p)}</div>
         </div>
-        <div class="hero-rating">${badge(p.rating, "huge")}<div class="src">${p.rating == null ? "sin rating global" : p.rating_principal === "integridad" ? "nota de integridad" : "rating temporada"}</div></div>
+        <div class="hero-rating">${badge(p.rating, "huge")}<div class="src">${p.rating == null ? "sin rating global" : p.rating_principal === "integridad" ? "nota de integridad" : "nota del mandato"}</div></div>
       </section>
 
-      ${p.titular_identificado === false ? `<div class="note">Titular aún no vinculado: se califica el cargo en la temporada ${p.temporada}.</div>` : ""}
+      ${p.titular_identificado === false ? `<div class="note">Titular aún no vinculado: se califica el cargo en el mandato ${esc(p.periodo || "")}.</div>` : ""}
       ${p.rating == null ? `<div class="note">Sin rating global: cobertura ${Math.round(p.cobertura * 100)}% &lt; ${Math.round(CFG.rating.min_coverage * 100)}% mínimo (como no tener minutos suficientes). Las categorías con datos sí se muestran.</div>` : ""}
 
       <div class="tiles">${tiles}</div>
@@ -309,7 +326,7 @@
               <thead><tr><th class="l">Métrica</th><th>Valor</th><th>Mediana pares</th><th class="l">Percentil</th><th class="l">Fuente</th></tr></thead>
               <tbody>${statRows}</tbody></table></div>
             ${p.extra ? `<p class="src">Impedimentos declarados en plenaria: <b>${p.extra.impedimentos_declarados_plenaria}</b> · se revisaron ${p.extra.proyectos_revisados} proyectos y ${p.extra.plenarias_revisadas} plenarias.</p>` : ""}
-            ${p.secop ? `<p class="src">SECOP ${p.temporada}: ${p.secop.contratos.toLocaleString("es-CO")} contratos${p.secop.contratos_secop1 ? ` (${p.secop.contratos_secop1.toLocaleString("es-CO")} en SECOP I)` : ""}, ${p.secop.procesos_competitivos} procesos competitivos.</p>` : ""}
+            ${p.secop ? `<p class="src">SECOP ${esc((p.secop.anios || p.anios || []).join(", "))}: ${p.secop.contratos.toLocaleString("es-CO")} contratos${p.secop.contratos_secop1 ? ` (${p.secop.contratos_secop1.toLocaleString("es-CO")} en SECOP I)` : ""}, ${p.secop.procesos_competitivos} procesos competitivos.</p>` : ""}
           </section>
           ${histHtml}
         </div>
@@ -333,9 +350,8 @@
 
     el.querySelector("[data-back]").onclick = (e) => {
       e.preventDefault();
-      if (state.role !== p.rol || state.season !== p.temporada) {
-        Object.assign(state, { role: p.rol, season: p.temporada, view: "resumen", liga: "", partido: "" });
-        $("#season").value = String(p.temporada);
+      if (state.role !== p.rol) {
+        Object.assign(state, { role: p.rol, view: "resumen", liga: "", partido: "" });
       }
       location.hash = "#/";
     };
@@ -346,6 +362,7 @@
   function ledgerHtml(p) {
     const I = p.integridad;
     if (!I) return "";
+    if (p.rating_principal !== "integridad" && !I.n_eventos) return "";   // performance roles: show ledger only if it has events
     const lvCfg = (CFG.integridad && CFG.integridad.niveles) || {};
     const legend = Object.entries(lvCfg).filter(([k]) => k !== "4").map(([k, v]) => `<span class="lv lv${k}">N${k}</span> ${esc(v.label)} (−${v.resta})`).join(" · ");
     if (!I.n_eventos) {
@@ -379,7 +396,6 @@
     const isPerson = !!m;
     $("#view-list").hidden = isPerson;
     $("#view-person").hidden = !isPerson;
-    $("#season-wrap").style.visibility = isPerson ? "hidden" : "visible";
     if (isPerson) {
       renderPerson(decodeURIComponent(m[1]));
     } else {
